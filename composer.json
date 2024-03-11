@@ -8,22 +8,26 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-mbstring": "*",
+        "ext-pgsql": "*",
         "doctrine/annotations": "^2.0",
         "doctrine/dbal": "^4.0",
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.0",
+        "friendsofsymfony/rest-bundle": "^3.6",
+        "jms/serializer-bundle": "^5.4",
+        "lexik/jwt-authentication-bundle": "*",
         "symfony/console": "6.4.*",
         "symfony/dotenv": "6.4.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.4.*",
+        "symfony/maker-bundle": "^1.56",
         "symfony/runtime": "6.4.*",
         "symfony/yaml": "6.4.*",
         "web-token/jwt-core": "^3.3",
         "web-token/jwt-key-mgmt": "^3.3",
         "web-token/jwt-signature": "^3.3",
-        "web-token/jwt-signature-algorithm-ecdsa": "^3.3",
-        "ext-pgsql": "*"
+        "web-token/jwt-signature-algorithm-ecdsa": "^3.3"
     },
     "config": {
         "allow-plugins": {
@@ -69,11 +73,8 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": true,
             "require": "6.4.*"
         }
-    },
-    "require-dev": {
-        "symfony/maker-bundle": "^1.56"
     }
 }

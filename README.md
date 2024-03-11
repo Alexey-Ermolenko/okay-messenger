@@ -26,3 +26,5 @@
 ## Установка проекта
 1. Скачать проект
 2. Выполнить команду ``make docker-build``
+
+https://www.binaryboxtuts.com/php-tutorials/symfony-6-json-web-tokenjwt-authentication/
