@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
-use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/api/v1', name: 'api_')]
 class IndexController extends AbstractController
 {
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {
@@ -23,7 +26,7 @@ class IndexController extends AbstractController
     #[Route('/', name: 'app_index')]
     public function index(): JsonResponse
     {
-        $sql = "SELECT * FROM test";
+        $sql = 'SELECT * FROM test';
         $testData = $this->connection->fetchAllAssociative($sql);
 
         $formattedTestData = [];

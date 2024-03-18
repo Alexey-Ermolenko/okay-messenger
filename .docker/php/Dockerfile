@@ -16,6 +16,13 @@ RUN apt-get update --fix-missing && \
     libyaml-dev && rm -r /var/lib/apt/lists/* \
     && pecl install xdebug-3.2.0 \
     && docker-php-ext-enable xdebug \
+    && echo "zend_extension=xdebug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_port=9000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.log=/var/log/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && docker-php-ext-install mysqli \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-install pdo_pgsql \
@@ -31,3 +38,5 @@ RUN apt-get update --fix-missing && \
     && docker-php-ext-enable memcache
 
 WORKDIR /var/www/ok
+
+#COPY xdebug.ini /usr/local/etc/php/

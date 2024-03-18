@@ -4,12 +4,20 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    uploadDir: '%kernel.project_dir%/public/upload'
+    exceptions:
+        Symfony\Component\HttpKernel\Exception\NotFoundHttpException: { code: 404 }
+        App\Exception\UserAlreadyExistsException: { code: 409, hidden: false }
+        App\Exception\UserNotFoundException: { code: 404, hidden: false }
+        App\Exception\UploadFileInvalidTypeException: { code: 404, hidden: false }
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            bool $isDebug: '%kernel.debug%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -19,6 +27,25 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Tests/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\ExceptionHandler\ExceptionMappingResolver:
+        arguments: ['%exceptions%']
+
+    App\Listener\ApiExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, priority: 10 }
+
+    App\Listener\ValidationExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, priority: 15 }
+
+    App\Listener\JwtCreatedListener:
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created }
+
+    App\Service\UploadService:
+        arguments: ['@filesystem', '%uploadDir%']
