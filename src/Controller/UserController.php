@@ -18,4 +18,19 @@ class UserController extends AbstractController
     {
         return $this->json($user);
     }
+
+    public function addFriend(): JsonResponse
+    {
+        return $this->json([]);
+    }
+
+    public function deleteFriend(): JsonResponse
+    {
+        return $this->json([]);
+    }
+
+    public function sendOkay(): JsonResponse
+    {
+        return $this->json([]);
+    }
 }
