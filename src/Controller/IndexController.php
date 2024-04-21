@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -14,7 +15,7 @@ class IndexController extends AbstractController
 {
     public const SUCCESS_BODY = ['result' => 'success'];
 
-    #[Route('/healthcheck/ping', name: 'healthcheck_ping', methods: ["GET"])]
+    #[Route('/healthcheck/ping', name: 'healthcheck_ping', methods: [Request::METHOD_GET])]
     public function ping(): JsonResponse
     {
         return new JsonResponse(self::SUCCESS_BODY, Response::HTTP_OK);

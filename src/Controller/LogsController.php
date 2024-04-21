@@ -14,11 +14,11 @@ use Symfony\Component\Routing\Annotation\Route;
 final class LogsController extends AbstractController
 {
     /**
-     * Получение списка последних логов
-     * @SWG\Tag (name="Логи")
+     * Giving logs list by user
+     * @SWG\Tag (name="Logs")
      * @SWG\Response (
      *     response=200,
-     *     description="Получение списка последних логов"
+     *     description="Giving logs list by user"
      * )
      * @param string $id
      * @return JsonResponse

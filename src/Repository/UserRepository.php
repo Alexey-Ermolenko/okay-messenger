@@ -7,6 +7,8 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
+use Doctrine\DBAL\Connection;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 /**
@@ -23,8 +25,9 @@ class UserRepository extends ServiceEntityRepository
     public string $_entityName;
     public mixed $_em;
 
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry
+    ) {
         parent::__construct($registry, User::class);
         $this->_entityName = User::class;
         $this->_em = $this->getEntityManager();
@@ -43,5 +46,30 @@ class UserRepository extends ServiceEntityRepository
         }
 
         return $user;
+    }
+
+    /** @throws Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function deleteFriend(int $id): void
+    {
+        /** @var Connection $connection */
+        $connection = $this->registry->getConnection();
+        $connection->delete('user_friends', ['friend_id' => $id]);
+    }
+
+    /** @throws Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function addFriend(int $id): void
+    {
+        $data = [
+            'user_id' => $rule['payment_method_id'] ?? null,
+            'friend_id' => $rule['payment_type'] ?? null,
+        ];
+
+        /** @var Connection $connection */
+        $connection = $this->registry->getConnection();
+        $connection->insert('user_friends', $data);
     }
 }

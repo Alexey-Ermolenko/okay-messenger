@@ -11,6 +11,7 @@ use App\Service\SignUpService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -21,7 +22,7 @@ class AuthController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/api/v1/auth/signup', methods: ['POST'])]
+    #[Route(path: '/api/v1/auth/signup', methods: [Request::METHOD_POST])]
     #[OA\Response(response: 200, description: 'Signs up a user',
         content: new OA\JsonContent(properties: [
             new OA\Property(property: 'token', type: 'string'),

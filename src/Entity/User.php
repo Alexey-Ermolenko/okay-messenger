@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
 
 #[ORM\Table(name: '`user`')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -30,9 +32,62 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles;
 
+    /**
+     * Many Users have Many Users.
+     * @var ArrayCollection
+     */
+    #[MaxDepth(1)]
+    #[ORM\ManyToMany(
+        targetEntity: User::class,
+        mappedBy: 'myFriends'
+    )]
+    public $friendsWithMe;
+
+    /**
+     * Many Users have many Users.
+     * @var ArrayCollection
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'friendsWithMe')]
+    #[ORM\JoinTable(name: 'user_friends')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'friend_id', referencedColumnName: 'id')]
+    #[MaxDepth(1)]
+    public $myFriends;
+
+
+    /**
+        SELECT u.id, u.username, f.*
+        FROM public.user u
+        JOIN public.user_friends uf ON u.id = uf.user_id
+        JOIN public.user f ON uf.friend_id = f.id
+        WHERE u.username = 'user1'
+     */
+    public function __construct() {
+        //https://stackoverflow.com/questions/39426788/how-to-create-many-to-many-self-referencing-association-with-extra-fields-by-usi
+        $this->friendsWithMe = new ArrayCollection();
+        $this->myFriends = new ArrayCollection();
+    }
+
     public function getUsername(): string
     {
         return $this->username;
+    }
+
+    public function addFriend(User $friend): self
+    {
+        if (!$this->myFriends->contains($friend)) {
+            $this->myFriends[] = $friend;
+        }
+        return $this;
+    }
+
+    public function removeFriend(User $friend): self
+    {
+        if ($this->myFriends->contains($friend)) {
+            $this->myFriends->removeElement($friend);
+        }
+
+        return $this;
     }
 
     public function setUsername(string $username): self

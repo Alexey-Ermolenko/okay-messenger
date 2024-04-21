@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -13,24 +15,50 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[Route('/api/v1/user', name: 'api_user')]
 class UserController extends AbstractController
 {
-    #[Route('/me', name: 'api_user_me', methods: ['GET'])]
+    public function __construct(
+        private readonly UserRepository $userRepository
+    ) {
+    }
+
+    #[Route('/me', name: 'api_user_me', methods: [Request::METHOD_GET])]
     public function me(#[CurrentUser] UserInterface $user): JsonResponse
     {
         return $this->json($user);
     }
 
-    public function addFriend(): JsonResponse
+    #[Route('/list', name: 'api_user_list', methods: [Request::METHOD_GET])]
+    public function list(): JsonResponse
     {
-        return $this->json([]);
+        $users = $this->userRepository->findAll();
+        return $this->json($users);
     }
 
-    public function deleteFriend(): JsonResponse
+    #[Route('/friend/add/{id}', name: 'api_user_add_friend', methods: [Request::METHOD_POST])]
+    public function addFriend(string $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
-        return $this->json([]);
+        $friend = $this->userRepository->find($id);
+        $userId = $this->userRepository->find($user->getId());
+
+        $resultUser = $userId->addFriend($this->userRepository->find($id));
+        $this->userRepository->saveAndCommit($resultUser);
+
+        return $this->json([
+            'result' => 'ok',
+            'user' => $resultUser
+        ]);
     }
 
-    public function sendOkay(): JsonResponse
+    #[Route('/friend/delete/{id}', name: 'api_user_delete_friend', methods: [Request::METHOD_POST])]
+    public function deleteFriend(string $id): JsonResponse
     {
-        return $this->json([]);
+        return $this->json([
+        ]);
+    }
+
+    #[Route('/okay/send/{id}', name: 'api_user_send_okay', methods: [Request::METHOD_POST])]
+    public function sendOkay(string $id): JsonResponse
+    {
+        return $this->json([
+        ]);
     }
 }
