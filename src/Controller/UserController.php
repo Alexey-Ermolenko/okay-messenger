@@ -36,10 +36,9 @@ class UserController extends AbstractController
     #[Route('/friend/add/{id}', name: 'api_user_add_friend', methods: [Request::METHOD_POST])]
     public function addFriend(string $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
-        $friend = $this->userRepository->find($id);
-        $userId = $this->userRepository->find($user->getId());
+        $user = $this->userRepository->find($user->getId());
 
-        $resultUser = $userId->addFriend($this->userRepository->find($id));
+        $resultUser = $user->addFriend($this->userRepository->find($id));
         $this->userRepository->saveAndCommit($resultUser);
 
         return $this->json([
@@ -49,15 +48,24 @@ class UserController extends AbstractController
     }
 
     #[Route('/friend/delete/{id}', name: 'api_user_delete_friend', methods: [Request::METHOD_POST])]
-    public function deleteFriend(string $id): JsonResponse
+    public function deleteFriend(string $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
+        $user = $this->userRepository->find($user->getId());
+
+        $deletedUser = $user->removeFriend($this->userRepository->find($id));
+        $this->userRepository->removeAndCommit($deletedUser);
+
         return $this->json([
+            'result' => 'ok',
+            'user' => $user
         ]);
     }
 
     #[Route('/okay/send/{id}', name: 'api_user_send_okay', methods: [Request::METHOD_POST])]
     public function sendOkay(string $id): JsonResponse
     {
+        //TODO:
+
         return $this->json([
         ]);
     }
