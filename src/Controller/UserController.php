@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Enum\RequestStatus;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,7 +44,7 @@ class UserController extends AbstractController
         $this->userRepository->saveAndCommit($resultUser);
 
         return $this->json([
-            'result' => 'ok',
+            'result' => RequestStatus::Success,
             'user' => $resultUser
         ]);
     }
@@ -59,7 +60,7 @@ class UserController extends AbstractController
         $this->userRepository->saveAndCommit($user);
 
         return $this->json([
-            'result' => 'ok',
+            'result' => RequestStatus::Success,
             'user' => $user
         ]);
     }
@@ -67,9 +68,17 @@ class UserController extends AbstractController
     #[Route('/okay/send/{id}', name: 'api_user_send_okay', methods: [Request::METHOD_POST])]
     public function sendOkay(string $id): JsonResponse
     {
-        //TODO:
+        //TODO: add ok_notification record
+        /**
+            INSERT INTO public.ok_notification (from_user_id, to_user_id, delivered, created_at)
+            VALUES (1, 6, true, '2024-04-23 22:56:18');
+         */
+        //TODO: send push notify   to user by userId
+        //TODO: send email message to user by email
 
         return $this->json([
+            'result' => RequestStatus::Success,
+            'notification' => 'test'
         ]);
     }
 }
