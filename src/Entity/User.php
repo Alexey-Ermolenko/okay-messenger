@@ -63,7 +63,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         WHERE u.username = 'user1'
      */
     public function __construct() {
-        //https://stackoverflow.com/questions/39426788/how-to-create-many-to-many-self-referencing-association-with-extra-fields-by-usi
         $this->friendsWithMe = new ArrayCollection();
         $this->myFriends = new ArrayCollection();
     }

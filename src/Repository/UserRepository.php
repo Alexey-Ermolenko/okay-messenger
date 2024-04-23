@@ -48,28 +48,28 @@ class UserRepository extends ServiceEntityRepository
         return $user;
     }
 
-    /** @throws Exception
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function deleteFriend(int $id): void
-    {
-        /** @var Connection $connection */
-        $connection = $this->registry->getConnection();
-        $connection->delete('user_friends', ['friend_id' => $id]);
-    }
-
-    /** @throws Exception
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function addFriend(int $id): void
-    {
-        $data = [
-            'user_id' => $rule['payment_method_id'] ?? null,
-            'friend_id' => $rule['payment_type'] ?? null,
-        ];
-
-        /** @var Connection $connection */
-        $connection = $this->registry->getConnection();
-        $connection->insert('user_friends', $data);
-    }
+//    /** @throws Exception
+//     * @throws \Doctrine\DBAL\Exception
+//     */
+//    public function deleteFriend(int $id): void
+//    {
+//        /** @var Connection $connection */
+//        $connection = $this->registry->getConnection();
+//        $connection->delete('user_friends', ['friend_id' => $id]);
+//    }
+//
+//    /** @throws Exception
+//     * @throws \Doctrine\DBAL\Exception
+//     */
+//    public function addFriend(int $id): void
+//    {
+//        $data = [
+//            'user_id' => $rule['payment_method_id'] ?? null,
+//            'friend_id' => $rule['payment_type'] ?? null,
+//        ];
+//
+//        /** @var Connection $connection */
+//        $connection = $this->registry->getConnection();
+//        $connection->insert('user_friends', $data);
+//    }
 }

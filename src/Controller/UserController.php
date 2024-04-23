@@ -34,11 +34,12 @@ class UserController extends AbstractController
     }
 
     #[Route('/friend/add/{id}', name: 'api_user_add_friend', methods: [Request::METHOD_POST])]
-    public function addFriend(string $id, #[CurrentUser] UserInterface $user): JsonResponse
+    public function addFriend(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
         $user = $this->userRepository->find($user->getId());
+        $friend = $this->userRepository->getUser($id);
 
-        $resultUser = $user->addFriend($this->userRepository->find($id));
+        $resultUser = $user->addFriend($friend);
         $this->userRepository->saveAndCommit($resultUser);
 
         return $this->json([
@@ -48,12 +49,14 @@ class UserController extends AbstractController
     }
 
     #[Route('/friend/delete/{id}', name: 'api_user_delete_friend', methods: [Request::METHOD_POST])]
-    public function deleteFriend(string $id, #[CurrentUser] UserInterface $user): JsonResponse
+    public function deleteFriend(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
         $user = $this->userRepository->find($user->getId());
 
-        $deletedUser = $user->removeFriend($this->userRepository->find($id));
-        $this->userRepository->removeAndCommit($deletedUser);
+        $deletedFriend = $this->userRepository->getUser($id);
+
+        $user = $user->removeFriend($deletedFriend);
+        $this->userRepository->saveAndCommit($user);
 
         return $this->json([
             'result' => 'ok',
