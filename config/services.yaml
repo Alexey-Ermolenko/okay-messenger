@@ -49,3 +49,14 @@ services:
 
     App\Service\UploadService:
         arguments: ['@filesystem', '%uploadDir%']
+
+#    App\EventSubscriber\ModelOperationSubscriber:
+#        arguments:
+#            $logger: '@logger'
+#        tags:
+#            - { name: doctrine.event_subscriber }
+
+    app.logger.doctrine_handler:
+        class: App\Handler\MonologDBHandler
+        arguments:
+            $logMessageProcessor: '@monolog.processor.psr_log_message'

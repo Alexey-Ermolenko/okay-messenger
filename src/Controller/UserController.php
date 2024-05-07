@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Notification;
 use App\Enum\RequestStatus;
+use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +19,8 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class UserController extends AbstractController
 {
     public function __construct(
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
+        private readonly NotificationRepository $notificationRepository,
     ) {
     }
 
@@ -65,16 +68,25 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/okay/send/{id}', name: 'api_user_send_okay', methods: [Request::METHOD_POST])]
-    public function sendOkay(string $id): JsonResponse
+    #[Route('/friend/send/{id}', name: 'api_user_send_okay', methods: [Request::METHOD_POST])]
+    public function sendOkay(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
         //TODO: add ok_notification record
+        //https://ru.linux-console.net/?p=7773&ysclid=lvqe6sikvp803026962
         /**
             INSERT INTO public.ok_notification (from_user_id, to_user_id, delivered, created_at)
             VALUES (1, 6, true, '2024-04-23 22:56:18');
          */
         //TODO: send push notify   to user by userId
         //TODO: send email message to user by email
+
+        $userToSend = $this->userRepository->getUser($id);
+        $email = $userToSend->getEmail();
+
+        $notification = new Notification($user->getId(), $id);
+        $notification->setDelivered(true);
+
+        $this->notificationRepository->saveAndCommit($notification);
 
         return $this->json([
             'result' => RequestStatus::Success,

@@ -30,8 +30,8 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/v1/admin, roles: ROLE_ADMIN }
-        - { path: ^/api/v1/user, roles: ROLE_USER }
-        - { path: ^/api,       roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/user,  roles: ROLE_USER }
+        - { path: ^/api,          roles: PUBLIC_ACCESS }
 
 when@test:
     security:
