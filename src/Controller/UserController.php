@@ -72,7 +72,8 @@ class UserController extends AbstractController
     public function sendOkay(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
         //TODO: add ok_notification record
-        //https://ru.linux-console.net/?p=7773&ysclid=lvqe6sikvp803026962
+        //  https://ru.linux-console.net/?p=7773&ysclid=lvqe6sikvp803026962
+        //  https://www.youtube.com/watch?v=uc6ev8d6j_M
         /**
             INSERT INTO public.ok_notification (from_user_id, to_user_id, delivered, created_at)
             VALUES (1, 6, true, '2024-04-23 22:56:18');

@@ -1,7 +1,7 @@
 nelmio_api_doc:
     documentation:
         info:
-            title: My App
+            title: OkayMessenger
             description: This is an awesome app!
             version: 1.0.0
         components:

@@ -51,10 +51,29 @@ class Notification
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function sendNotify(): self
     {
         $this->delivered = true;
         return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int|null $id
+     */
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
     }
 
     /**
