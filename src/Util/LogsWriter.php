@@ -27,11 +27,14 @@ final class LogsWriter
         $connection->insert(
             'logs',
             [
-                'level' => $log->level,
-                'channel' => $log->channel,
-                'datetime' => $log->datetime,
-                'message' => $log->message,
-                'context' => $log->context,
+                'entity_type' => $log->entityType,
+                'entity_id'   => $log->entityId,
+                'action'      => $log->action,
+                'data'        => $log->data,
+                'created_at'  => $log->createdAt,
+                'user_id'     => $log->user_id,
+                'ip_address'  => $log->ipAddress,
+                'route'       => $log->requestRoute,
             ],
         );
     }
@@ -52,20 +55,27 @@ final class LogsWriter
         $placeholders = [];
         $values = [];
         foreach ($logs as $log) {
-            $values[] = $log->level;
-            $values[] = $log->channel;
-            $values[] = $log->datetime;
-            $values[] = $log->message;
-            $values[] = $log->context;
-            $placeholders[] = '?, ?, ?, ?, ?';
+            $values[] = $log->entityType;
+            $values[] = $log->entityId;
+            $values[] = $log->action;
+            $values[] = $log->data;
+            $values[] = $log->createdAt;
+            $values[] = $log->user_id;
+            $values[] = $log->ipAddress;
+            $values[] = $log->requestRoute;
+
+            $placeholders[] = '?, ?, ?, ?, ?, ?, ?, ?';
         }
 
         $columns = [
-            'level',
-            'channel',
-            'datetime',
-            'message',
-            'context',
+            'entity_type',
+            'entity_id',
+            'action',
+            'data',
+            'created_at',
+            'user_id',
+            'ip_address',
+            'route',
         ];
 
         /** @noinspection SqlInsertValues */

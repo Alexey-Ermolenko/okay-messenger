@@ -4,63 +4,35 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Log;
-use DateInterval;
-use DateTimeImmutable;
-use \App\Service\DatetimeServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
+use App\Util\LogsReader;
+use DateTimeInterface;
+use Exception;
 
 final class LogService
 {
-    private const EXCLUDED_CHANNELS = ['doctrine'];
-    private const DEFAULT_TIMEFRAME = 'P2D';
-
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private Security $security,
-        private RequestStack $requestStack
+        private readonly LogsReader $logReader,
     ) {
     }
 
-    public function log(string $entityType, string $entityId, string $action, array $eventData): void
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function findUserLogsByUserId(string $id): array
     {
-        $user = $this->security->getUser();
-        $request = $this->requestStack->getCurrentRequest();
-        $log = new Log();
-
-        $log->setMessage();
-        $log->setDatetime(new DateTimeImmutable());
-        $log->setChannel();
-        $log->setContext();
-        $log->setLevel();
-        /*
-            $log->setEntityType($entityType);
-            $log->setEntityId($entityId);
-            $log->setAction($action);
-            $log->setEventData($eventData);
-            $log->setUser($user);
-            $log->setRequestRoute($request->get('_route'));
-            $log->setIpAddress($request->getClientIp());
-            $log->setCreatedAt(new DateTimeImmutable);
-        */
-        $this->em->persist($log);
-        $this->em->flush();
+        return $this->logReader->findUsersById($id);
     }
 
-
-    public function findRequestsLogs(?DateTimeImmutable $sinceDatetime = null): array
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function findNotificationLogsByUserId(string $id): array
     {
-//        $date = $sinceDatetime ?? $this->datetimeService
-//            ->now()
-//            ->sub(new DateInterval(self::DEFAULT_TIMEFRAME));
+        return $this->logReader->findNotificationLogsByUserId($id);
+    }
 
-        return [];
-//        return $this->logsReader->findSlowRequestsLogs(
-//            $sinceDatetime ?? $this->datetimeService
-//            ->now()
-//            ->sub(new DateInterval(self::DEFAULT_TIMEFRAME)),
-//        );
+    public function findRequestsLogs(string $id, DateTimeInterface $since): array
+    {
+        return $this->logReader->findRequestsLogs($id, $since);
     }
 }

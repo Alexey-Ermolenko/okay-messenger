@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\DTO\LogDTO;
-use App\Util\LogsWriter;
+use App\DTO\RawLogDTO;
+use App\Util\RawLogsWriter;
 use Doctrine\DBAL\Exception;
 use JsonException;
 use Monolog\Handler\AbstractHandler;
@@ -23,7 +24,7 @@ class MonologDBHandler extends AbstractHandler
     private static bool $enabled = true;
 
     public function __construct(
-        private readonly LogsWriter $logsWriter,
+        private readonly RawLogsWriter $logsWriter,
         private readonly PsrLogMessageProcessor $logMessageProcessor,
         Level $level = Level::Debug,
         bool $bubble = true,
@@ -127,20 +128,30 @@ class MonologDBHandler extends AbstractHandler
 
     /**
      * @param LogRecord $record
-     * @return LogDTO
+     * @return RawLogDTO|null
      */
-    private function prepareRecord(LogRecord $record): LogDTO
+    private function prepareRecord(LogRecord $record): ?RawLogDTO
     {
         $record = ($this->logMessageProcessor)($record);
 
-        /** @var string $level */
-        $level = $record->level->getName();
-        return new LogDTO(
-            $level,
-            $record->channel,
-            $record->datetime->format(self::DATETIME_FORMAT),
-            $this->prepareMessage($record),
-            $this->prepareContext($record),
-        );
+//        return new RawLogDTO(
+//            requestedAt: '',
+//            respondedAt: '',
+//            status: '',
+//            requestHeaders: '',
+//            requestBody: '',
+//            responseHeaders: '',
+//            responseBody: ''
+//        );
+
+//        /** @var string $level */
+//        $level = $record->level->getName();
+//        return new LogDTO(
+//            $level,
+//            $record->channel,
+//            $record->datetime->format(self::DATETIME_FORMAT),
+//            $this->prepareMessage($record),
+//            $this->prepareContext($record),
+//        );
     }
 }

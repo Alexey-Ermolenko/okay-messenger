@@ -52,7 +52,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/friend/delete/{id}', name: 'api_user_delete_friend', methods: [Request::METHOD_POST])]
+    #[Route('/friend/delete/{id}', name: 'api_user_delete_friend', methods: [Request::METHOD_DELETE])]
     public function deleteFriend(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
         $user = $this->userRepository->find($user->getId());
