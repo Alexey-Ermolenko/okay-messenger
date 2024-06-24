@@ -89,13 +89,15 @@ final class LogsController extends AbstractController
      * @SWG\Tag (name="requests_logs")
      * @SWG\Response (response=200, description="Giving logs list by notification")
      *
+     * @param UserInterface $user
      * @param string $since
      * @return JsonResponse
+     * @throws Exception
      */
     #[Route(
         path: '/requests/{since}',
         name: 'requests',
-        defaults: ['since' => ''],
+        defaults: ['since' => '2024-01-01T00:00:00'],
         methods: [Request::METHOD_GET],
     )]
     public function getRequestsLogs(#[CurrentUser] UserInterface $user, string $since): JsonResponse
@@ -110,7 +112,7 @@ final class LogsController extends AbstractController
 
         return $this->json([
             'result' => RequestStatus::Success,
-            'logs' => $this->logService->findRequestsLogs($id, $sinceDatetime)
+            'logs' => $this->logService->findRequestsLogs($sinceDatetime)
         ]);
     }
 }

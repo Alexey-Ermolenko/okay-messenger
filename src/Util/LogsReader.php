@@ -110,7 +110,7 @@ final class LogsReader
     /**
      * @throws Exception
      */
-    public function findRequestsLogs(string $id, DateTimeImmutable $sinceDatetime): array
+    public function findRequestsLogs(DateTimeInterface $sinceDatetime): array
     {
         /** @var Connection $connection */
         $connection = $this->managerRegistry->getConnection();
@@ -119,8 +119,7 @@ final class LogsReader
             ->select('*')
             ->from('raw_logs')
             ->where(
-                "channel = 'http_api_requests'",
-                'datetime > :since',
+                'requested_at > :since',
             )
             ->orderBy('id', 'DESC')
             ->setMaxResults(self::LIMIT)
