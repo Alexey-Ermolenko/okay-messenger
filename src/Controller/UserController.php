@@ -8,9 +8,11 @@ use App\Entity\Notification;
 use App\Enum\RequestStatus;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
+use App\Service\EmailNotificatorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -21,6 +23,7 @@ class UserController extends AbstractController
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly NotificationRepository $notificationRepository,
+        private readonly EmailNotificatorService $notificator,
     ) {
     }
 
@@ -68,6 +71,9 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     #[Route('/friend/send/{id}', name: 'api_user_send_okay', methods: [Request::METHOD_POST])]
     public function sendOkay(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
@@ -83,6 +89,8 @@ class UserController extends AbstractController
 
         $userToSend = $this->userRepository->getUser($id);
         $email = $userToSend->getEmail();
+
+        $this->notificator->sendEmail($user->getEmail(), $email);
 
         $notification = new Notification($user->getId(), $id);
         $notification->setDelivered(true);

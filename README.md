@@ -37,3 +37,22 @@ The project has a primitive architecture:
 ```https://www.doctrine-project.org/projects/doctrine-orm/en/3.1/tutorials/getting-started.html```
 
 ```https://www.binaryboxtuts.com/php-tutorials/symfony-6-json-web-tokenjwt-authentication/```
+
+
+
+credentials
+
+
+
+https://mail.proton.me/u/0/inbox?welcome=true
+
+
+https://www.mailersend.com/signup
+
+alibaba789787
+alibaba789787@proton.me
+N#cXB$iF9u!U^n7
+
+https://www.mailjet.com/pricing/
+MAILER_DSN=smtp://a.o.ermolenko@gmail.com:qxkbsokrjmogjuuh@smtp.gmail.com:465?verify_peer=0&auto_tls=false
+

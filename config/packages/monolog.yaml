@@ -25,19 +25,6 @@ when@dev:
             #    type: stream
             #    path: "%kernel.logs_dir%/doctrine.log"
             #    level: debug
-#            db:
-#                type: service
-#                id: app.logger.doctrine_handler
-#                process_psr_3_messages: true
-#                channels: ["app", "http_client_requests", "http_api_requests"]
-
-#            significantDb:
-#                type: service
-#                id: app.logger.doctrine_handler
-#                process_psr_3_messages: true
-#                level: info
-#                channels: ["http_client_requests", "http_api_requests", "users", "notifications"]
-
 when@test:
     monolog:
         handlers:

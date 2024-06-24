@@ -113,15 +113,4 @@ final class LogsController extends AbstractController
             'logs' => $this->logService->findRequestsLogs($id, $sinceDatetime)
         ]);
     }
-
-//    /**
-//     * @param string $id search logs by paymentId|internalId|externalId
-//     * @return JsonResponse
-//     * @throws ExceptionDBAL
-//     */
-//    #[Route('/{id}', name: '', methods: [Request::METHOD_GET])]
-//    public function getRawLogs(string $id): JsonResponse
-//    {
-//        return $this->responseFactory->json($this->rawLogService->getPaymentLogs($id));
-//    }
 }
