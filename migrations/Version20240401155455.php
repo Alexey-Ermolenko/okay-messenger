@@ -14,7 +14,7 @@ final class Version20240401155455 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create friends relationship table';
     }
 
     public function up(Schema $schema): void
