@@ -39,7 +39,7 @@ final class EntityLoggerService
             entityType: $entityType,
             entityId: (int)$entityId,
             createdAt: (new \DateTimeImmutable)->format(self::DATETIME_FORMAT),
-            user_id: $user->getId(),
+            user_id: $user?->getId(),
             action: $action,
             requestRoute: $request->get('_route'),
             data: json_encode($eventData),

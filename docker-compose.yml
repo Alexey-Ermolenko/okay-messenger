@@ -1,4 +1,4 @@
-version: "3.8"
+#version: "3.8"
 
 services:
     nginx:
@@ -69,6 +69,17 @@ services:
         PGADMIN_DEFAULT_PASSWORD: root
       networks:
         - local_network
+
+    rabbitmq:
+      container_name: rabbitmq
+      image: rabbitmq:management
+      ports:
+        - 15672:15672
+        - 5672:5672
+      environment:
+        - RABBITMQ_DEFAULT_USER=user
+        - RABBITMQ_DEFAULT_PASS=password
+
 volumes:
   db_data:
 networks:
