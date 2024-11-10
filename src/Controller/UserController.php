@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Notification;
+use App\Entity\User;
 use App\Enum\RequestStatus;
+use App\Message\SampleMessage;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
-use App\Service\EmailNotificatorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -23,7 +25,7 @@ class UserController extends AbstractController
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly NotificationRepository $notificationRepository,
-        private readonly EmailNotificatorService $notificator,
+        private readonly MessageBusInterface $messageBus,
     ) {
     }
 
@@ -88,9 +90,16 @@ class UserController extends AbstractController
         //TODO: send email message to user by email
 
         $userToSend = $this->userRepository->getUser($id);
-        $email = $userToSend->getEmail();
 
-        $this->notificator->sendEmail($user->getEmail(), $email);
+        /** @var User $user */
+        $msg = (string)json_encode([
+            'fromEmail' => $user->getEmail(),
+            'toEmail' => $userToSend->getEmail(),
+        ]);
+
+        $this->messageBus->dispatch(
+            message: new SampleMessage($msg)
+        );
 
         $notification = new Notification($user->getId(), $id);
         $notification->setDelivered(true);
