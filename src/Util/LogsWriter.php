@@ -28,19 +28,20 @@ final class LogsWriter
             'logs',
             [
                 'entity_type' => $log->entityType,
-                'entity_id'   => $log->entityId,
-                'action'      => $log->action,
-                'data'        => $log->data,
-                'created_at'  => $log->createdAt,
-                'user_id'     => $log->user_id,
-                'ip_address'  => $log->ipAddress,
-                'route'       => $log->requestRoute,
+                'entity_id' => $log->entityId,
+                'action' => $log->action,
+                'data' => $log->data,
+                'created_at' => $log->createdAt,
+                'user_id' => $log->user_id,
+                'ip_address' => $log->ipAddress,
+                'route' => $log->requestRoute,
             ],
         );
     }
 
     /**
      * @param LogDTO[] $logs
+     *
      * @throws Exception
      */
     public function writeBatch(array $logs): void
@@ -78,7 +79,7 @@ final class LogsWriter
             'route',
         ];
 
-        /** @noinspection SqlInsertValues */
+        /* @noinspection SqlInsertValues */
         $connection->executeStatement(
             sprintf(
                 'INSERT INTO logs (%s) VALUES (%s)',

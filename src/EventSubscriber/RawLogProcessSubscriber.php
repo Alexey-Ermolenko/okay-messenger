@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
-use Psr\Clock\ClockInterface;
 use App\Service\RequestLoggerService;
-use DateTimeImmutable;
 use Doctrine\DBAL\Exception;
+use Psr\Clock\ClockInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -16,7 +15,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class RawLogProcessSubscriber implements EventSubscriberInterface
 {
-    private DateTimeImmutable $requestedAt;
+    private \DateTimeImmutable $requestedAt;
 
     public function __construct(
         private readonly ClockInterface $datetimeService,
@@ -46,12 +45,12 @@ final class RawLogProcessSubscriber implements EventSubscriberInterface
      */
     public function onController(ControllerEvent $event): void
     {
-        #if (!$event->isMainRequest()) {
-        #    return;
-        #}
+        // if (!$event->isMainRequest()) {
+        //    return;
+        // }
 
-        #/** @var ReflectionMethod $reflector */
-        #$reflector = $event->getControllerReflector();
+        // /** @var ReflectionMethod $reflector */
+        // $reflector = $event->getControllerReflector();
     }
 
     /**

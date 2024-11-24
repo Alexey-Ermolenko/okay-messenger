@@ -13,21 +13,21 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 #[AsCommand(
-    name: "app:send"
+    name: 'app:send'
 )]
 class SendMessageCommand extends Command
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus,
-        string $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        #$msg = "Message sent: " . time() . "\n";
-        $msg = (string)json_encode([
+        // $msg = "Message sent: " . time() . "\n";
+        $msg = (string) json_encode([
             'fromEmail' => 'test@test.com',
             'toEmail' => 'test@test2.com',
         ]);

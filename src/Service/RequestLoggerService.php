@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\RawLogDTO;
-use App\Entity\User;
 use App\Util\RawLogsWriter;
-use DateTimeImmutable;
 use Doctrine\DBAL\Exception;
-use JsonException;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use \Symfony\Bundle\SecurityBundle\Security;
 
 final class RequestLoggerService
 {
@@ -28,7 +25,7 @@ final class RequestLoggerService
     {
         try {
             return json_encode($data, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE);
-        } catch (JsonException $e) {
+        } catch (\JsonException $e) {
             return json_encode(['err' => $e->getMessage()], JSON_INVALID_UTF8_SUBSTITUTE) ?: '{}';
         }
     }
@@ -39,15 +36,14 @@ final class RequestLoggerService
     public function logRequest(
         Request $request,
         Response $response,
-        DateTimeImmutable $requestedAt,
-        DateTimeImmutable $respondedAt
-    ): void
-    {
+        \DateTimeImmutable $requestedAt,
+        \DateTimeImmutable $respondedAt
+    ): void {
         $record = new RawLogDTO(
             id: null,
             requestedAt: ($requestedAt)->format(self::DATETIME_FORMAT),
             respondedAt: ($respondedAt)->format(self::DATETIME_FORMAT),
-            status: (string)$response->getStatusCode(),
+            status: (string) $response->getStatusCode(),
             requestHeaders: $this->jsonEncode($request->headers->all()),
             requestBody: $request->getContent(),
             responseHeaders: $this->jsonEncode($response->headers->all()),
