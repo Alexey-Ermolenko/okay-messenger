@@ -42,7 +42,6 @@ class NotificationController extends AbstractController
         return $this->json([self::SUCCESS_BODY, $notifications]);
     }
 
-
     #[Route('/notification/get/{id}', name: 'notification_get', methods: [Request::METHOD_GET])]
     public function get(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {

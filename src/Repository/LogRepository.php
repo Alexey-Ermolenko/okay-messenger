@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Log;
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- *
  * @method Log|null find($id, $lockMode = null, $lockVersion = null)
  * @method Log|null findOneBy(array $criteria, array $orderBy = null)
  * @method Log[]    findAll()

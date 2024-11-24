@@ -6,7 +6,7 @@ namespace App\Repository;
 
 trait RepositoryModifyTrait
 {
-    public function save(object $object): void
+    private function save(object $object): void
     {
         assert($this->_entityName === $object::class);
         $this->_em->persist($object);

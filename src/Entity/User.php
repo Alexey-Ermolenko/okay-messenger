@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Model\UserRequest;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
@@ -34,6 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Many Users have Many Users.
+     *
      * @var ArrayCollection
      */
     #[MaxDepth(1)]
@@ -45,6 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Many Users have many Users.
+     *
      * @var ArrayCollection
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'friendsWithMe')]
@@ -54,13 +58,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[MaxDepth(1)]
     public $myFriends;
 
-
     /**
-        SELECT u.id, u.username, f.*
-        FROM public.user u
-        JOIN public.user_friends uf ON u.id = uf.user_id
-        JOIN public.user f ON uf.friend_id = f.id
-        WHERE u.username = 'user1'
+     * SELECT u.id, u.username, f.*
+     * FROM public.user u
+     * JOIN public.user_friends uf ON u.id = uf.user_id
+     * JOIN public.user f ON uf.friend_id = f.id
+     * WHERE u.username = 'user1'.
      */
     public function __construct() {
         $this->friendsWithMe = new ArrayCollection();
@@ -77,6 +80,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (!$this->myFriends->contains($friend)) {
             $this->myFriends[] = $friend;
         }
+
         return $this;
     }
 

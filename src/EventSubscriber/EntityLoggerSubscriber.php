@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\EventSubscriber;
 
 use App\Service\EntityLoggerService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -20,15 +22,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[AsDoctrineListener(event: Events::postRemove)]
 class EntityLoggerSubscriber implements EventSubscriberInterface
 {
-    const IGNORED_ATTRIBUTES_CONTEXT = [
-        'ignored_attributes' =>
-            [
+    public const IGNORED_ATTRIBUTES_CONTEXT = [
+        'ignored_attributes' => [
                 'password',
                 'userIdentifier',
                 '__initializer__',
                 '__cloner__',
                 '__isInitialized__',
-            ]
+            ],
     ];
 
     // Thanks to PHP 8's constructor property promotion and 8.1's readonly properties, we can
@@ -100,18 +101,18 @@ class EntityLoggerSubscriber implements EventSubscriberInterface
     {
         $entityClass = get_class($entity);
         // If the class is Log entity, ignore. We don't want to audit our own logs!
-        if ($entityClass === 'App\Entity\Log') {
+        if ('App\Entity\Log' === $entityClass) {
             return;
         }
         $entityId = $entity->getId();
         $entityType = str_replace('App\Entity\\', '', $entityClass);
         // The Doctrine unit of work keeps track of all changes made to entities.
         $uow = $em->getUnitOfWork();
-        if ($action === 'delete') {
+        if ('delete' === $action) {
             // For deletions, we get our entity from the temporary array.
             $entityData = array_pop($this->removals);
             $entityId = $entityData['id'];
-        } elseif ($action === 'insert') {
+        } elseif ('insert' === $action) {
             // For insertions, we convert the entity to an array.
             $entityData = $this->serializer->normalize($entity, null, self::IGNORED_ATTRIBUTES_CONTEXT);
         } else {
@@ -132,9 +133,9 @@ class EntityLoggerSubscriber implements EventSubscriberInterface
                 if (is_object($value[0])) {
                     $diff = null;
 
-                    if ($action === 'insert' || $action === 'update') {
+                    if ('insert' === $action || 'update' === $action) {
                         $diff = $value->getInsertDiff();
-                    } elseif ($action === 'delete') {
+                    } elseif ('delete' === $action) {
                         $diff = $value->getInsertDiff();
                     }
 
@@ -142,16 +143,16 @@ class EntityLoggerSubscriber implements EventSubscriberInterface
                     $entityData[$entityType]['collectionData'] = $data;
                 }
 
-                //$value->getSnapshot()
-                //$value->getDeleteDiff()
-                //$value->getInsertDiff()
+                // $value->getSnapshot()
+                // $value->getDeleteDiff()
+                // $value->getInsertDiff()
 
-//                if (is_object($value[0])) {
-//                    $entityData[$key][0] = $this->serializer->normalize($value[0], null, self::IGNORED_ATTRIBUTES_CONTEXT);
-//                }
-//                if (is_object($value[1])) {
-//                    $entityData[$key][1] = $this->serializer->normalize($value[1], null, self::IGNORED_ATTRIBUTES_CONTEXT);
-//                }
+                //                if (is_object($value[0])) {
+                //                    $entityData[$key][0] = $this->serializer->normalize($value[0], null, self::IGNORED_ATTRIBUTES_CONTEXT);
+                //                }
+                //                if (is_object($value[1])) {
+                //                    $entityData[$key][1] = $this->serializer->normalize($value[1], null, self::IGNORED_ATTRIBUTES_CONTEXT);
+                //                }
             }
         }
 

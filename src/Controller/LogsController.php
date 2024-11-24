@@ -24,14 +24,15 @@ final class LogsController extends AbstractController
     }
 
     /**
-     * Giving logs list by user
+     * Giving logs list by user.
+     *
      * @SWG\Tag (name="api_logs_users")
+     *
      * @SWG\Response (
      *     response=200,
      *     description="Giving logs list by user"
      * )
-     * @param string $id
-     * @return JsonResponse
+     *
      * @throws Exception
      */
     #[Route('/user/{id}', name: 'api_logs_users', methods: [Request::METHOD_GET])]
@@ -39,19 +40,22 @@ final class LogsController extends AbstractController
     {
         return $this->json([
             'result' => RequestStatus::Success,
-            'logs' => $this->logService->findUserLogsByUserId($id)
+            'logs' => $this->logService->findUserLogsByUserId($id),
         ]);
     }
 
     /**
-     * Giving logs list by user
+     * Giving logs list by user.
+     *
      * @SWG\Tag (name="api_logs_auth_users")
+     *
      * @SWG\Response (
      *     response=200,
      *     description="Giving logs list by auth user"
      * )
+     *
      * @param UserInterface $user
-     * @return JsonResponse
+     *
      * @throws Exception
      */
     #[Route('/user/my', name: 'api_logs_auth_users', methods: [Request::METHOD_GET])]
@@ -59,20 +63,22 @@ final class LogsController extends AbstractController
     {
         return $this->json([
             'result' => RequestStatus::Success,
-            'logs' => $this->logService->findUserLogsByUserId((string)$user->getId())
+            'logs' => $this->logService->findUserLogsByUserId((string) $user->getId()),
         ]);
     }
 
     /**
-     * Giving logs list by notifications
+     * Giving logs list by notifications.
+     *
      * @SWG\Tag (name="notifications_logs")
+     *
      * @SWG\Response (
      *     response=200,
      *     description="Giving logs list by notifications"
      * )
      *
      * @param UserInterface $user
-     * @return JsonResponse
+     *
      * @throws Exception
      */
     #[Route('/user/notifications/my', name: 'api_logs_notifications', methods: [Request::METHOD_GET])]
@@ -80,18 +86,19 @@ final class LogsController extends AbstractController
     {
         return $this->json([
             'result' => RequestStatus::Success,
-            'logs' => $this->logService->findNotificationLogsByUserId((string)$user->getId())
+            'logs' => $this->logService->findNotificationLogsByUserId((string) $user->getId()),
         ]);
     }
 
     /**
-     * Giving logs list by request
+     * Giving logs list by request.
+     *
      * @SWG\Tag (name="requests_logs")
+     *
      * @SWG\Response (response=200, description="Giving logs list by notification")
      *
      * @param UserInterface $user
-     * @param string $since
-     * @return JsonResponse
+     *
      * @throws Exception
      */
     #[Route(
@@ -102,17 +109,17 @@ final class LogsController extends AbstractController
     )]
     public function getRequestsLogs(#[CurrentUser] UserInterface $user, string $since): JsonResponse
     {
-        $id = (string)$user->getId();
+        $id = (string) $user->getId();
 
         $sinceDatetime = DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', $since)
             ?: DateTimeImmutable::createFromFormat('Y-m-d', $since)
             ?: null;
 
-        ///return $this->json($this->logService->findRequestsLogs($id, $sinceDatetime));
+        // /return $this->json($this->logService->findRequestsLogs($id, $sinceDatetime));
 
         return $this->json([
             'result' => RequestStatus::Success,
-            'logs' => $this->logService->findRequestsLogs($sinceDatetime)
+            'logs' => $this->logService->findRequestsLogs($sinceDatetime),
         ]);
     }
 }

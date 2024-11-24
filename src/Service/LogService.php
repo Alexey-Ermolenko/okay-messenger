@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Util\LogsReader;
-use DateTimeInterface;
 use Doctrine\DBAL\Exception;
 
 final class LogService
@@ -34,7 +33,7 @@ final class LogService
     /**
      * @throws Exception
      */
-    public function findRequestsLogs(DateTimeInterface $since): array
+    public function findRequestsLogs(\DateTimeInterface $since): array
     {
         return $this->logReader->findRequestsLogs($since);
     }

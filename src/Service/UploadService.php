@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Exception\UploadFileInvalidTypeException;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Uid\Uuid;
 
 class UploadService
 {

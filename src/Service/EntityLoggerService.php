@@ -8,8 +8,8 @@ use App\DTO\LogDTO;
 use App\Entity\User;
 use App\Util\LogsWriter;
 use Doctrine\DBAL\Exception;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
-use \Symfony\Bundle\SecurityBundle\Security;
 
 final class EntityLoggerService
 {
@@ -28,7 +28,7 @@ final class EntityLoggerService
     /**
      * @throws Exception
      */
-    public function log(string $entityType, string $entityId, string $action, array $eventData): void
+    public function log(string $entityType, int $entityId, string $action, array $eventData): void
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -37,8 +37,8 @@ final class EntityLoggerService
         $record = new LogDTO(
             id: null,
             entityType: $entityType,
-            entityId: (int)$entityId,
-            createdAt: (new \DateTimeImmutable)->format(self::DATETIME_FORMAT),
+            entityId: $entityId,
+            createdAt: (new \DateTimeImmutable())->format(self::DATETIME_FORMAT),
             user_id: $user?->getId(),
             action: $action,
             requestRoute: $request->get('_route'),

@@ -37,7 +37,6 @@ final class RawLogsWriter
     }
 
     /**
-     * @param RawLogDTO[] $logs
      * @throws Exception
      */
     public function writeBatch(array $rawLogs): void
@@ -73,7 +72,7 @@ final class RawLogsWriter
             'response_body',
         ];
 
-        /** @noinspection SqlInsertValues */
+        /* @noinspection SqlInsertValues */
         $connection->executeStatement(
             sprintf(
                 'INSERT INTO raw_logs (%s) VALUES (%s)',

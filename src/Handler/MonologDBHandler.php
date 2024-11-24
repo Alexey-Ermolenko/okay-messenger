@@ -8,7 +8,6 @@ use App\DTO\LogDTO;
 use App\DTO\RawLogDTO;
 use App\Util\RawLogsWriter;
 use Doctrine\DBAL\Exception;
-use JsonException;
 use Monolog\Handler\AbstractHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
@@ -48,15 +47,11 @@ class MonologDBHandler extends AbstractHandler
     {
         try {
             return json_encode($data, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE);
-        } catch (JsonException $e) {
+        } catch (\JsonException $e) {
             return json_encode(['err' => $e->getMessage()], JSON_INVALID_UTF8_SUBSTITUTE) ?: '{}';
         }
     }
 
-    /**
-     * @param LogRecord $record
-     * @return bool
-     */
     public function handle(LogRecord $record): bool
     {
         if (!self::$enabled || !$this->isHandling($record)) {
@@ -84,18 +79,16 @@ class MonologDBHandler extends AbstractHandler
         }
     }
 
-    /**
-     * @param LogRecord $record
-     * @return bool
-     */
     protected function write(LogRecord $record): bool
     {
         try {
             $this->logsWriter->write($this->prepareRecord($record));
+
             return true;
         } catch (Exception) {
             // Disable logger on any DB error
             self::$enabled = false;
+
             return false;
         }
     }
@@ -117,41 +110,33 @@ class MonologDBHandler extends AbstractHandler
         }
     }
 
-    /**
-     * @param LogRecord $record
-     * @return string
-     */
     private function prepareContext(LogRecord $record): string
     {
         return $this->jsonEncode($record->context);
     }
 
-    /**
-     * @param LogRecord $record
-     * @return RawLogDTO|null
-     */
     private function prepareRecord(LogRecord $record): ?RawLogDTO
     {
         $record = ($this->logMessageProcessor)($record);
 
-//        return new RawLogDTO(
-//            requestedAt: '',
-//            respondedAt: '',
-//            status: '',
-//            requestHeaders: '',
-//            requestBody: '',
-//            responseHeaders: '',
-//            responseBody: ''
-//        );
+        //        return new RawLogDTO(
+        //            requestedAt: '',
+        //            respondedAt: '',
+        //            status: '',
+        //            requestHeaders: '',
+        //            requestBody: '',
+        //            responseHeaders: '',
+        //            responseBody: ''
+        //        );
 
-//        /** @var string $level */
-//        $level = $record->level->getName();
-//        return new LogDTO(
-//            $level,
-//            $record->channel,
-//            $record->datetime->format(self::DATETIME_FORMAT),
-//            $this->prepareMessage($record),
-//            $this->prepareContext($record),
-//        );
+        //        /** @var string $level */
+        //        $level = $record->level->getName();
+        //        return new LogDTO(
+        //            $level,
+        //            $record->channel,
+        //            $record->datetime->format(self::DATETIME_FORMAT),
+        //            $this->prepareMessage($record),
+        //            $this->prepareContext($record),
+        //        );
     }
 }
