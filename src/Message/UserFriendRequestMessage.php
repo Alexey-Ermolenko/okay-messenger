@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-final class SampleMessage
+final class UserFriendRequestMessage
 {
     public function __construct(
         private readonly string $content

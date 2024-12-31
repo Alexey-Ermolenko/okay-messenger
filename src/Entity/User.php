@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Model\UserRequest;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
@@ -58,6 +56,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[MaxDepth(1)]
     public $myFriends;
 
+    #[MaxDepth(1)]
+    #[ORM\OneToMany(targetEntity: UserFriendsRequest::class, mappedBy: 'user', cascade: ['remove'])]
+    public $sentRequests;
+
+    #[MaxDepth(1)]
+    #[ORM\OneToMany(targetEntity: UserFriendsRequest::class, mappedBy: 'friend', cascade: ['remove'])]
+    public $receivedRequests;
+
     /**
      * SELECT u.id, u.username, f.*
      * FROM public.user u
@@ -68,6 +74,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct() {
         $this->friendsWithMe = new ArrayCollection();
         $this->myFriends = new ArrayCollection();
+        $this->sentRequests = new ArrayCollection();
+        $this->receivedRequests = new ArrayCollection();
     }
 
     public function getUsername(): string

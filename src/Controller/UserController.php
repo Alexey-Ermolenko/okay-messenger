@@ -7,16 +7,18 @@ namespace App\Controller;
 use App\Attribute\RequestBody;
 use App\Entity\Notification;
 use App\Entity\User;
+use App\Entity\UserFriendsRequest;
 use App\Enum\RequestStatus;
-use App\Message\SampleMessage;
+use App\Message\EmailMessage;
+use App\Message\UserFriendRequestMessage;
 use App\Model\ErrorResponse;
 use App\Model\UserRequest;
 use App\Repository\NotificationRepository;
+use App\Repository\UserFriendsRequestRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -30,6 +32,7 @@ class UserController extends AbstractController
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly NotificationRepository $notificationRepository,
+        private readonly UserFriendsRequestRepository $userFriendsRequestRepository,
         private readonly MessageBusInterface $messageBus,
     ) {
     }
@@ -77,27 +80,64 @@ class UserController extends AbstractController
      * @param UserInterface $user
      * @return JsonResponse
      */
-    #[Route('/friend/add/{id}', name: 'api_user_add_friend', methods: [Request::METHOD_POST])]
-    public function addFriend(int $id, #[CurrentUser] UserInterface $user): JsonResponse
+    #[Route('/friend/send-request/{id}', name: 'api_user_friend_send_request', methods: [Request::METHOD_POST])]
+    public function sendFriendRequest(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
+        /**
+            $user = $this->userRepository->find($user->getId());
+            $friend = $this->userRepository->getUser($id);
+
+            $resultUser = $user->addFriend($friend);
+            $this->userRepository->saveAndCommit($resultUser);
+
+            return $this->json([
+                'result' => RequestStatus::Success,
+                'user' => $resultUser,
+            ]);
+        */
+
+        /** @var User $user */
         $user = $this->userRepository->find($user->getId());
         $friend = $this->userRepository->getUser($id);
 
-        $resultUser = $user->addFriend($friend);
-        $this->userRepository->saveAndCommit($resultUser);
+        $userFriendsRequest = new UserFriendsRequest();
+
+        $userFriendsRequest->setUserId($user->getId());
+        $userFriendsRequest->setFriendId($friend->getId());
+
+        $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequest);
+
+
+        $msg = (string) json_encode([
+            'user' => [
+                'email' => $user->getEmail(),
+                'id' => $user->getId(),
+            ],
+            'toFriend' => [
+                'email' => $friend->getEmail(),
+                'id' => $friend->getId(),
+            ],
+        ]);
+
+        $this->messageBus->dispatch(
+            message: new UserFriendRequestMessage($msg)
+        );
 
         return $this->json([
             'result' => RequestStatus::Success,
-            'user' => $resultUser,
+            'notification' => 'Adding friend request was sent successfully',
         ]);
     }
 
     /**
+     * @param int $id
      * @param UserInterface $user
+     * @return JsonResponse
      */
     #[Route('/friend/delete/{id}', name: 'api_user_delete_friend', methods: [Request::METHOD_DELETE])]
     public function deleteFriend(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
+        /** @var User $user */
         $user = $this->userRepository->find($user->getId());
 
         $deletedFriend = $this->userRepository->getUser($id);
@@ -111,9 +151,22 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
+    #[Route('/friend/accept/{id}', name: 'api_user_accept_friend', methods: [Request::METHOD_POST])]
+    public function acceptFriend(int $id, #[CurrentUser] UserInterface $user): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->userRepository->find($user->getId());
+        $friend = $this->userRepository->getUser($id);
+
+        $resultUser = $user->addFriend($friend);
+        $this->userRepository->saveAndCommit($resultUser);
+
+        return $this->json([
+            'result' => RequestStatus::Success,
+            'user' => $resultUser,
+        ]);
+    }
+
     #[Route('/friend/send/{id}', name: 'api_user_send_okay', methods: [Request::METHOD_POST])]
     public function sendOkay(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
@@ -136,7 +189,7 @@ class UserController extends AbstractController
         ]);
 
         $this->messageBus->dispatch(
-            message: new SampleMessage($msg)
+            message: new EmailMessage($msg)
         );
 
         $notification = new Notification($user->getId(), $id);

@@ -19,7 +19,9 @@ framework:
         log: true
 
     serializer:
+        enable_annotations: true
         default_context:
+            allow_extra_attributes: false
             enable_max_depth: true
             yaml_indentation: 2
 
