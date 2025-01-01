@@ -1,0 +1,6 @@
+App\Entity\UserFriendsRequest:
+  attributes:
+      user:
+        max_depth: 1
+      friend:
+        max_depth: 1

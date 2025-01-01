@@ -1,0 +1,10 @@
+App\Entity\User:
+  attributes:
+      friendsWithMe:
+        max_depth: 1
+      myFriends:
+        max_depth: 1
+      sentRequests:
+        max_depth: 1
+      receivedRequests:
+        max_depth: 1

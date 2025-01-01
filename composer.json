@@ -16,7 +16,6 @@
         "doctrine/orm": "^3.0",
         "friendsofsymfony/rest-bundle": "^3.6",
         "gesdinet/jwt-refresh-token-bundle": "^1.3",
-        "jms/serializer-bundle": "^5.4",
         "lexik/jwt-authentication-bundle": "*",
         "nelmio/api-doc-bundle": "*",
         "phpunit/phpunit": "^11.0",
