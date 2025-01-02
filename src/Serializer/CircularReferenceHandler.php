@@ -9,6 +9,6 @@ class CircularReferenceHandler
     public function __invoke($object)
     {
         #return sprintf('Circular Reference to %s', get_class($object));
-        return $object->id;
+        return str_replace("\u0000", "", json_encode((array)$object));
     }
 }

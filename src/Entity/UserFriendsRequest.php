@@ -35,12 +35,12 @@ class UserFriendsRequest
     #[MaxDepth(1)]
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'sentRequests')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private User $user; //TODO: make public
+    public User $user;
 
     #[MaxDepth(1)]
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'receivedRequests')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private User $friend; //TODO: make public
+    public User $friend;
 
     public function __construct()
     {
