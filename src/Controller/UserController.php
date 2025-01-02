@@ -16,11 +16,13 @@ use App\Model\UserRequest;
 use App\Repository\NotificationRepository;
 use App\Repository\UserFriendsRequestRepository;
 use App\Repository\UserRepository;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -52,7 +54,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     #[Route('/update/{id}', name: 'api_user_update', methods: [Request::METHOD_POST])]
     #[OA\Response(response: 200, description: 'Updates a user', attachables: [new Model(type: User::class)])]
@@ -100,32 +102,52 @@ class UserController extends AbstractController
         $user = $this->userRepository->find($user->getId());
         $friend = $this->userRepository->getUser($id);
 
-        $userFriendsRequest = new UserFriendsRequest();
+        if (!$user->myFriends->contains($friend)) {
+            $userFriendsRequest = new UserFriendsRequest();
+            $userFriendsRequest->user = $user;
+            $userFriendsRequest->friend = $friend;
 
-        $userFriendsRequest->setUserId($user->getId());
-        $userFriendsRequest->setFriendId($friend->getId());
+            try {
+                $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequest);
 
-        $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequest);
+                $acceptFriendUrl = $this->generateUrl('api_userapi_user_accept_friend', [
+                    'id' => $friend->getId()
+                ],
+                    UrlGeneratorInterface::ABSOLUTE_URL,
+                );
 
+                $msg = (string) json_encode([
+                    'msg' => UserFriendsRequest::class,
+                    'acceptFriendUrl' => $acceptFriendUrl,
+                    'user' => [
+                        'email' => $user->getEmail(),
+                        'id' => $user->getId(),
+                    ],
+                    'toFriend' => [
+                        'email' => $friend->getEmail(),
+                        'id' => $friend->getId(),
+                    ],
+                ]);
 
-        $msg = (string) json_encode([
-            'user' => [
-                'email' => $user->getEmail(),
-                'id' => $user->getId(),
-            ],
-            'toFriend' => [
-                'email' => $friend->getEmail(),
-                'id' => $friend->getId(),
-            ],
-        ]);
+                $this->messageBus->dispatch(
+                    message: new UserFriendRequestMessage($msg)
+                );
 
-        $this->messageBus->dispatch(
-            message: new UserFriendRequestMessage($msg)
-        );
+                $result = RequestStatus::Success;
+                $notification = 'Adding friend request was sent successfully';
+
+            } catch (Exception $exception) {
+                $result = RequestStatus::Error;
+                $notification = $exception->getMessage();
+            }
+        } else {
+            $result = RequestStatus::Error;
+            $notification = 'This user has already friend';
+        }
 
         return $this->json([
-            'result' => RequestStatus::Success,
-            'notification' => 'Adding friend request was sent successfully',
+            'result' => $result,
+            'notification' => $notification,
         ]);
     }
 

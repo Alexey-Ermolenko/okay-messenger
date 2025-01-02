@@ -5,14 +5,32 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
-            async: '%env(MESSENGER_TRANSPORT_DSN)%'
-            # failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
+            friend_request_messages:
+                dsn: '%env(MESSENGER_TRANSPORT_FRIEND_REQUEST_EXCHANGE_DSN)%'
+                options:
+                    auto_setup: true
+                    exchange:
+                        name: friend_request_exchange
+                        default_publish_routing_key: friend_request_key
+                    queues:
+                        friend_request_queue:
+                            binding_keys: [friend_request_key]
+
+            email_messages:
+                dsn: '%env(MESSENGER_TRANSPORT_EMAIL_MESSAGES_DSN)%'
+                options:
+                    auto_setup: true
+                    exchange:
+                        name: email_messages
+                        default_publish_routing_key: email_key
+                    queues:
+                        email_queue:
+                            binding_keys: [email_key]
 
         routing:
             # Route your messages to the transports
-            'App\Message\EmailMessage': async
-            'App\Message\UserFriendRequestMessage': async
+            'App\Message\EmailMessage': email_messages
+            'App\Message\UserFriendRequestMessage': friend_request_messages
 
 # when@test:
 #    framework:
