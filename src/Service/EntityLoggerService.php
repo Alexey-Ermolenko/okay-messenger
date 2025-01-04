@@ -28,7 +28,7 @@ final class EntityLoggerService
     /**
      * @throws Exception
      */
-    public function log(string $entityType, int $entityId, string $action, array $eventData): void
+    public function log(string $entityType, ?int $entityId, string $action, array $eventData): void
     {
         /** @var User $user */
         $user = $this->security->getUser();

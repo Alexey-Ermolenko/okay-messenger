@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use OpenApi\Annotations as SWG;
 
 #[Route('/api/v1/logs', name: 'api_logs')]
 final class LogsController extends AbstractController
@@ -56,6 +57,7 @@ final class LogsController extends AbstractController
      *
      * @param UserInterface $user
      *
+     * @return JsonResponse
      * @throws Exception
      */
     #[Route('/user/my', name: 'api_logs_auth_users', methods: [Request::METHOD_GET])]

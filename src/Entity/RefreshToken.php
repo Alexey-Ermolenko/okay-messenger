@@ -9,6 +9,7 @@ use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshTokenRepository;
 use Gesdinet\JWTRefreshTokenBundle\Model\AbstractRefreshToken;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
 
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: RefreshTokenRepository::class)]
@@ -28,6 +29,7 @@ class RefreshToken extends AbstractRefreshToken
     #[ORM\Column(type: 'datetime')]
     protected $valid;
 
+    #[MaxDepth(1)]
     #[ORM\JoinColumn(nullable: false)]
     #[ORM\ManyToOne(targetEntity: User::class)]
     private UserInterface $user;

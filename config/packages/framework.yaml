@@ -19,6 +19,9 @@ framework:
         log: true
 
     serializer:
+        circular_reference_handler: 'App\Serializer\CircularReferenceHandler'
+        enabled: true
+        enable_annotations: true
         default_context:
             enable_max_depth: true
             yaml_indentation: 2

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Message\SampleMessage;
+use App\Message\EmailMessage;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +32,7 @@ class SendMessageCommand extends Command
             'toEmail' => 'test@test2.com',
         ]);
 
-        $this->messageBus->dispatch(new SampleMessage($msg), [
+        $this->messageBus->dispatch(new EmailMessage($msg), [
             new DelayStamp(1000),
         ]);
 

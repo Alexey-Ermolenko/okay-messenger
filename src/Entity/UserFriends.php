@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserFriendsRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: UserFriendsRepository::class)]
 #[ORM\Table(name: 'user_friends')]
@@ -19,6 +19,7 @@ class UserFriends
     protected ?int $id = null;
 
     /** Many Users have one userFriend. This is the owning side. */
+    #[MaxDepth(1)]
     #[ManyToOne(targetEntity: User::class)]
     private ?User $user = null;
 
