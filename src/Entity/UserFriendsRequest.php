@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\RequestFriendRequestStatus;
 use App\Repository\UserFriendsRequestRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
@@ -29,8 +30,8 @@ class UserFriendsRequest
     #[ORM\Column(name: 'responded_at', type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $respondedAt;
 
-    #[ORM\Column(type: Types::BOOLEAN)]
-    private bool $accepted = false;
+    #[ORM\Column(type: Types::STRING)]
+    private string $accepted;
 
     #[MaxDepth(1)]
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'sentRequests')]
@@ -84,12 +85,12 @@ class UserFriendsRequest
         return $this;
     }
 
-    public function setAccepted(bool $accepted): void
+    public function setAccepted(string $accepted): void
     {
         $this->accepted = $accepted;
     }
 
-    public function isAccepted(): bool
+    public function getAccepted(): string
     {
         return $this->accepted;
     }

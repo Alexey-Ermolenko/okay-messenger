@@ -10,20 +10,20 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250102151123 extends AbstractMigration
+final class Version20250103160854 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Set user_id friend_id unique index';
+        return 'Set accepted field as enums of string values';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE UNIQUE INDEX USER_FRIEND_UNIQUE_IDX ON user_friends_request (user_id, friend_id)');
+        $this->addSql('ALTER TABLE user_friends_request ALTER COLUMN accepted TYPE VARCHAR(8)');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP INDEX user_friend_unique_idx');
+        $this->addSql('ALTER TABLE user_friends_request ALTER COLUMN accepted TYPE BOOLEAN USING accepted::BOOLEAN');
     }
 }

@@ -8,6 +8,7 @@ use App\Attribute\RequestBody;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Entity\UserFriendsRequest;
+use App\Enum\RequestFriendRequestStatus;
 use App\Enum\RequestStatus;
 use App\Message\EmailMessage;
 use App\Message\UserFriendRequestMessage;
@@ -107,6 +108,7 @@ class UserController extends AbstractController
             $userFriendsRequest = new UserFriendsRequest();
             $userFriendsRequest->user = $user;
             $userFriendsRequest->friend = $friend;
+            $userFriendsRequest->setAccepted(RequestFriendRequestStatus::pending->value);
 
             try {
                 $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequest);
@@ -198,15 +200,19 @@ class UserController extends AbstractController
         $friend = $this->userRepository->find($friend_id);
 
         if ($user && $friend) {
+            //TODO: найти userFriendsRequestRepository которые равны pending
             $userFriendsRequestRepository = $this->userFriendsRequestRepository->findOneBy([
                 'user_id' => $user_id,
                 'friend_id' => $friend_id,
-                'accepted' => false,
+                'accepted' => [
+                    RequestFriendRequestStatus::pending->value,
+                    RequestFriendRequestStatus::deleted->value,
+                ],
             ]);
 
             if ($userFriendsRequestRepository) {
                 $resultUser = $user->addFriend($friend);
-                $userFriendsRequestRepository->setAccepted(true);
+                $userFriendsRequestRepository->setAccepted(RequestFriendRequestStatus::accepted->value);
 
                 $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequestRepository);
                 $this->userRepository->saveAndCommit($resultUser);
@@ -220,6 +226,34 @@ class UserController extends AbstractController
         return new Response(
             '<html><body>Failed</body></html>'
         );
+    }
+
+
+    #[Route('/friend/request/delete/user/{user_id}/friend/{friend_id}', name: 'api_user_delete_friend_request', methods: [Request::METHOD_POST])]
+    public function deleteUserFriendRequest(int $user_id, int $friend_id): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->userRepository->find($user_id);
+        /** @var User $friend */
+        $friend = $this->userRepository->find($friend_id);
+
+        if ($user && $friend) {
+            $userFriendsRequestRepository = $this->userFriendsRequestRepository->findOneBy([
+                'user_id' => $user_id,
+                'friend_id' => $friend_id,
+                'accepted' => false,
+            ]);
+
+            if ($userFriendsRequestRepository) {
+                $userFriendsRequestRepository->setAccepted(RequestFriendRequestStatus::deleted->value);
+                $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequestRepository);
+            }
+        }
+
+        return $this->json([
+            'result' => RequestStatus::Success,
+            'user' => '',
+        ]);
     }
 
     #[Route('/friend/send/{id}', name: 'api_user_send_okay', methods: [Request::METHOD_POST])]
