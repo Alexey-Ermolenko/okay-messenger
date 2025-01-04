@@ -28,7 +28,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/api/v1/user', name: 'api_user')]
 class UserController extends AbstractController
@@ -113,7 +112,7 @@ class UserController extends AbstractController
             try {
                 $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequest);
 
-                $acceptFriendUrl = $this->generateUrl('api_userapi_user_accept_friend', [
+                $acceptFriendUrl = $this->generateUrl('api_indexapi_accept_user_friend', [
                     'user_id' => $user->getId(),
                     'friend_id' => $friend->getId(),
                 ],
@@ -176,58 +175,6 @@ class UserController extends AbstractController
             'user' => $user,
         ]);
     }
-
-    #[Route('/friend/accept/user/{user_id}/friend/{friend_id}', name: 'api_user_accept_friend', methods: [Request::METHOD_GET])]
-    public function acceptFriend(int $user_id, int $friend_id): Response
-    {
-        //TODO:
-        //  check friend_request by friend_id and user_id
-        //  if friend_request by friend_id and user_id is exists and accepted == false
-        //  ...
-        //  then addFriend and friend_request set accepted = true
-        //  else throw error message
-        //  ...
-        //  http://localhost:8080/api/v1/user/friend/accept/user/9/friend/11
-        //  ...
-        //  INSERT INTO public.user_friends_request
-        //  (id, requested_at, responded_at, user_id, friend_id, accepted)
-        //  VALUES
-        //  (44, '2025-01-02 19:41:29', null, 11, 9, false);
-
-        /** @var User $user */
-        $user = $this->userRepository->find($user_id);
-        /** @var User $friend */
-        $friend = $this->userRepository->find($friend_id);
-
-        if ($user && $friend) {
-            //TODO: найти userFriendsRequestRepository которые равны pending
-            $userFriendsRequestRepository = $this->userFriendsRequestRepository->findOneBy([
-                'user_id' => $user_id,
-                'friend_id' => $friend_id,
-                'accepted' => [
-                    RequestFriendRequestStatus::pending->value,
-                    RequestFriendRequestStatus::deleted->value,
-                ],
-            ]);
-
-            if ($userFriendsRequestRepository) {
-                $resultUser = $user->addFriend($friend);
-                $userFriendsRequestRepository->setAccepted(RequestFriendRequestStatus::accepted->value);
-
-                $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequestRepository);
-                $this->userRepository->saveAndCommit($resultUser);
-
-                return new Response(
-                    '<html><body>Friend ' . $user->getUsername() . ' added</body></html>'
-                );
-            }
-        }
-
-        return new Response(
-            '<html><body>Failed</body></html>'
-        );
-    }
-
 
     #[Route('/friend/request/delete/user/{user_id}/friend/{friend_id}', name: 'api_user_delete_friend_request', methods: [Request::METHOD_POST])]
     public function deleteUserFriendRequest(int $user_id, int $friend_id): JsonResponse
