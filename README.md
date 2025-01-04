@@ -26,10 +26,11 @@ The project has a primitive architecture:
 ## Project installation
 1. Download the project
 2. Run the command ``make docker-build`` and ``make docker-exec`` for enter into to container
-3. Execute `php bin/console lexik:jwt:generate-keypair`
-4. NelmioApiDocBundle  http://localhost:8080/api/doc
-5. ??? 
-6. Profit
+3. Inside of php docker container `composer install`
+4. Execute `php bin/console lexik:jwt:generate-keypair`
+5. NelmioApiDocBundle  http://localhost:8080/api/doc
+6. ??? 
+7. Profit
 
 ## Tutorials
 
