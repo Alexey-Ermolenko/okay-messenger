@@ -188,12 +188,11 @@ class UserController extends AbstractController
             $userFriendsRequestRepository = $this->userFriendsRequestRepository->findOneBy([
                 'user_id' => $user_id,
                 'friend_id' => $friend_id,
-                'accepted' => false,
+                'accepted' => RequestFriendRequestStatus::pending->value,
             ]);
 
             if ($userFriendsRequestRepository) {
-                $userFriendsRequestRepository->setAccepted(RequestFriendRequestStatus::deleted->value);
-                $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequestRepository);
+                $this->userFriendsRequestRepository->removeAndCommit($userFriendsRequestRepository);
             }
         }
 
