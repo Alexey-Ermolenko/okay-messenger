@@ -30,7 +30,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 
 #[Route('/api/v1/user', name: 'api_user')]
-class UserController extends AbstractController
+final class UserController extends AbstractController
 {
     public function __construct(
         private readonly UserRepository $userRepository,

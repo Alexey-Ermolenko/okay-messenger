@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/v1', name: 'api_index')]
-class IndexController extends AbstractController
+final class IndexController extends AbstractController
 {
     public const SUCCESS_BODY = ['result' => 'success'];
 

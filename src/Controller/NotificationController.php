@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/api/v1', name: 'api_index')]
-class NotificationController extends AbstractController
+final class NotificationController extends AbstractController
 {
     public const SUCCESS_BODY = ['result' => 'success'];
 
