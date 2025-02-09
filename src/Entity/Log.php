@@ -1,5 +1,5 @@
 <?php
-
+//TODO: delete model
 declare(strict_types=1);
 
 namespace App\Entity;
@@ -29,22 +29,9 @@ class Log
     #[ORM\Column(name: 'message', type: Types::STRING, length: 512)]
     private string $message;
 
-    #[ORM\Column(name: 'context', type: 'json')]
-    private array $context;
-
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getContext(): array
-    {
-        return $this->context;
-    }
-
-    public function setContext(array $context): void
-    {
-        $this->context = $context;
     }
 
     public function getMessage(): string

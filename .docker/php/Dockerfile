@@ -34,6 +34,8 @@ RUN apt-get update --fix-missing && \
     && docker-php-ext-install imap \
     && pecl install amqp \
     && docker-php-ext-enable amqp \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && pecl install memcache \
     && docker-php-ext-enable memcache
 

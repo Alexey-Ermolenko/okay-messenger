@@ -6,7 +6,9 @@ namespace App\Service;
 
 use App\DTO\LogDTO;
 use App\Entity\User;
+use App\Util\EntityLogBufferWriter;
 use App\Util\LogsWriter;
+use App\Util\RawLogBuffer\LogBufferWriter;
 use Doctrine\DBAL\Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,7 +23,7 @@ final class EntityLoggerService
     public function __construct(
         private readonly Security $security,
         private readonly RequestStack $requestStack,
-        private readonly LogsWriter $logsWriter,
+        private readonly EntityLogBufferWriter $bufferWriter,
     ) {
     }
 
@@ -43,9 +45,9 @@ final class EntityLoggerService
             action: $action,
             requestRoute: $request->get('_route'),
             data: json_encode($eventData),
-            ipAddress: $request->getClientIp()
+            ipAddress: $request->getClientIp(),
         );
 
-        $this->logsWriter->write($record);
+        $this->bufferWriter->writeEntityLog($record);
     }
 }

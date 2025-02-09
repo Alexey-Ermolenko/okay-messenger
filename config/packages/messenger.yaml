@@ -27,10 +27,17 @@ framework:
                         email_queue:
                             binding_keys: [email_key]
 
+            raw_log: '%env(REDIS_URL)%/2'
+#            raw_log:
+#                dsn: '%env(REDIS_URL)%/2'
+#                options:
+#                    auto_setup: true
+
         routing:
             # Route your messages to the transports
             'App\Message\EmailMessage': email_messages
             'App\Message\UserFriendRequestMessage': friend_request_messages
+            'App\Util\RawLogBuffer\PersistService\DTO\BufferLogMessage': raw_log
 
 # when@test:
 #    framework:

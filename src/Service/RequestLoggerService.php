@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\RawLogDTO;
-use App\Util\RawLogsWriter;
+use App\Util\RawLogBuffer\LogBufferWriter;
 use Doctrine\DBAL\Exception;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,8 +15,8 @@ final class RequestLoggerService
     private const DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     public function __construct(
-        private readonly Security $security,
-        private readonly RawLogsWriter $logsWriter,
+        #private readonly RawLogsWriter   $logsWriter,
+        private readonly LogBufferWriter $bufferWriter,
     ) {
     }
 
@@ -50,6 +49,6 @@ final class RequestLoggerService
             responseBody: $response->getContent(),
         );
 
-        $this->logsWriter->write($record);
+        $this->bufferWriter->writeRequest($record);
     }
 }

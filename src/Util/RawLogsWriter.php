@@ -9,15 +9,15 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
-final class RawLogsWriter
+final readonly class RawLogsWriter
 {
     public function __construct(
-        private readonly ManagerRegistry $managerRegistry
+        private ManagerRegistry $managerRegistry
     ) {
     }
 
     /** @throws Exception */
-    public function write(RawLogDTO $rawLow): void
+    public function write(RawLogDTO $rawLog): void
     {
         /** @var Connection $connection */
         $connection = $this->managerRegistry->getConnection();
@@ -25,13 +25,13 @@ final class RawLogsWriter
         $connection->insert(
             'raw_logs',
             [
-                'requested_at' => $rawLow->requestedAt,
-                'responded_at' => $rawLow->respondedAt,
-                'status' => $rawLow->status,
-                'request_headers' => $rawLow->requestHeaders,
-                'request_body' => $rawLow->requestBody,
-                'response_headers' => $rawLow->responseHeaders,
-                'response_body' => $rawLow->responseBody,
+                'requested_at' => $rawLog->requestedAt,
+                'responded_at' => $rawLog->respondedAt,
+                'status' => $rawLog->status,
+                'request_headers' => $rawLog->requestHeaders,
+                'request_body' => $rawLog->requestBody,
+                'response_headers' => $rawLog->responseHeaders,
+                'response_body' => $rawLog->responseBody,
             ]
         );
     }

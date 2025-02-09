@@ -51,3 +51,5 @@ services:
 
     App\Service\UploadService:
         arguments: ['@filesystem', '%uploadDir%']
+
+    Redis: '@snc_redis.default'
