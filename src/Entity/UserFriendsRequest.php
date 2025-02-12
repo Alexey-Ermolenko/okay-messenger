@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use App\Enum\RequestFriendRequestStatus;
 use App\Repository\UserFriendsRequestRepository;
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -25,10 +25,10 @@ class UserFriendsRequest
     private int $friend_id;
 
     #[ORM\Column(name: 'requested_at', type: Types::DATETIME_IMMUTABLE)]
-    private DateTimeImmutable $requestedAt;
+    private \DateTimeImmutable $requestedAt;
 
     #[ORM\Column(name: 'responded_at', type: Types::DATETIME_IMMUTABLE)]
-    private DateTimeImmutable $respondedAt;
+    private \DateTimeImmutable $respondedAt;
 
     #[ORM\Column(type: Types::STRING)]
     private string $accepted;
@@ -46,6 +46,7 @@ class UserFriendsRequest
     public function __construct()
     {
         $this->setRequestedAt(new \DateTimeImmutable());
+
         return $this;
     }
 
@@ -61,24 +62,24 @@ class UserFriendsRequest
         return $this;
     }
 
-    public function getRequestedAt(): DateTimeImmutable
+    public function getRequestedAt(): \DateTimeImmutable
     {
         return $this->requestedAt;
     }
 
-    public function setRequestedAt(DateTimeImmutable $requestedAt): static
+    public function setRequestedAt(\DateTimeImmutable $requestedAt): static
     {
         $this->requestedAt = $requestedAt;
 
         return $this;
     }
 
-    public function getRespondedAt(): DateTimeImmutable
+    public function getRespondedAt(): \DateTimeImmutable
     {
         return $this->respondedAt;
     }
 
-    public function setRespondedAt(DateTimeImmutable $respondedAt): static
+    public function setRespondedAt(\DateTimeImmutable $respondedAt): static
     {
         $this->respondedAt = $respondedAt;
 

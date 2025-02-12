@@ -64,9 +64,6 @@ class UserRequest
         return $this;
     }
 
-    /**
-     * @param string $confirmPassword
-     */
     public function setConfirmPassword(string $confirmPassword): void
     {
         $this->confirmPassword = $confirmPassword;

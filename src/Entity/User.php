@@ -71,7 +71,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * JOIN public.user f ON uf.friend_id = f.id
      * WHERE u.username = 'user1'.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->friendsWithMe = new ArrayCollection();
         $this->myFriends = new ArrayCollection();
         $this->sentRequests = new ArrayCollection();

@@ -34,7 +34,7 @@ final class IndexController extends AbstractController
     #[Route('/accept/user/{user_id}/friend/{friend_id}', name: 'api_accept_user_friend', methods: [Request::METHOD_GET])]
     public function acceptFriend(int $user_id, int $friend_id): Response
     {
-        //TODO:
+        // TODO:
         //  check friend_request by friend_id and user_id
         //  if friend_request by friend_id and user_id is exists and accepted == false
         //  ...
@@ -54,7 +54,7 @@ final class IndexController extends AbstractController
         $friend = $this->userRepository->find($friend_id);
 
         if ($user && $friend) {
-            //TODO: найти userFriendsRequestRepository которые равны pending
+            // TODO: найти userFriendsRequestRepository которые равны pending
             $userFriendsRequestRepository = $this->userFriendsRequestRepository->findOneBy([
                 'user_id' => $user_id,
                 'friend_id' => $friend_id,
@@ -72,7 +72,7 @@ final class IndexController extends AbstractController
                 $this->userRepository->saveAndCommit($resultUser);
 
                 return new Response(
-                    '<html><body>Friend ' . $user->getUsername() . ' added</body></html>'
+                    '<html><body>Friend '.$user->getUsername().' added</body></html>'
                 );
             }
         }
