@@ -19,6 +19,7 @@
         "lexik/jwt-authentication-bundle": "*",
         "nelmio/api-doc-bundle": "*",
         "phpunit/phpunit": "^11.0",
+        "sentry/sentry-symfony": "^5.1",
         "symfony/amqp-messenger": "6.4.*",
         "symfony/asset": "6.4.*",
         "symfony/console": "6.4.*",
