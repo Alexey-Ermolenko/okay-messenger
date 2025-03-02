@@ -8,7 +8,6 @@ use App\Enum\RequestStatus;
 use App\Service\LogService;
 use Doctrine\DBAL\Exception;
 use Monolog\DateTimeImmutable;
-use OpenApi\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,6 +56,7 @@ final class LogsController extends AbstractController
      *
      * @param UserInterface $user
      *
+     * @return JsonResponse
      * @throws Exception
      */
     #[Route('/user/my', name: 'api_logs_auth_users', methods: [Request::METHOD_GET])]
@@ -80,6 +80,7 @@ final class LogsController extends AbstractController
      *
      * @param UserInterface $user
      *
+     * @return JsonResponse
      * @throws Exception
      */
     #[Route('/user/notifications/my', name: 'api_logs_notifications', methods: [Request::METHOD_GET])]
@@ -99,7 +100,8 @@ final class LogsController extends AbstractController
      * @SWG\Response (response=200, description="Giving logs list by notification")
      *
      * @param UserInterface $user
-     *
+     * @param string $since
+     * @return JsonResponse
      * @throws Exception
      */
     #[Route(
@@ -110,13 +112,9 @@ final class LogsController extends AbstractController
     )]
     public function getRequestsLogs(#[CurrentUser] UserInterface $user, string $since): JsonResponse
     {
-        $id = (string) $user->getId();
-
         $sinceDatetime = DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', $since)
             ?: DateTimeImmutable::createFromFormat('Y-m-d', $since)
             ?: null;
-
-        // /return $this->json($this->logService->findRequestsLogs($id, $sinceDatetime));
 
         return $this->json([
             'result' => RequestStatus::Success,
@@ -124,3 +122,4 @@ final class LogsController extends AbstractController
         ]);
     }
 }
+
