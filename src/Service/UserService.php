@@ -67,17 +67,25 @@ final readonly class UserService
         try {
             $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequest);
 
-            $acceptFriendUrl = $this->urlGenerator->generate(
-                'api_accept_user_friend',
-                ['user_id' => $user->getId(), 'friend_id' => $friend->getId()],
+            $acceptFriendUrl = $this->urlGenerator->generate('api_accept_user_friend',
+                [
+                    'user_id' => $user->getId(),
+                    'friend_id' => $friend->getId(),
+                ],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
 
             $msg = json_encode([
                 'msg' => UserFriendsRequest::class,
                 'acceptFriendUrl' => $acceptFriendUrl,
-                'user' => ['email' => $user->getEmail(), 'id' => $user->getId()],
-                'toFriend' => ['email' => $friend->getEmail(), 'id' => $friend->getId()],
+                'user' => [
+                    'email' => $user->getEmail(),
+                    'id' => $user->getId(),
+                ],
+                'toFriend' => [
+                    'email' => $friend->getEmail(),
+                    'id' => $friend->getId(),
+                ],
             ]);
 
             $this->messageBus->dispatch(new UserFriendRequestMessage($msg));
