@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Attribute\RequestBody;
-use App\Entity\Notification;
 use App\Entity\User;
 use App\Enum\RequestStatus;
-use App\Message\EmailMessage;
 use App\Model\ErrorResponse;
 use App\Model\UserRequest;
-use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\UserService;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -20,7 +17,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -78,9 +74,7 @@ final class UserController extends AbstractController
     }
 
     /**
-     * @param int $id
      * @param UserInterface $user
-     * @return JsonResponse
      */
     #[Route(
         path: '/friend/send-request/{id}',
@@ -90,13 +84,12 @@ final class UserController extends AbstractController
     public function sendFriendRequest(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
         $result = $this->userService->sendFriendRequest($user, $id);
+
         return $this->json($result);
     }
 
     /**
-     * @param int $id
      * @param UserInterface $user
-     * @return JsonResponse
      */
     #[Route(
         path: '/friend/delete/{id}',
@@ -106,6 +99,7 @@ final class UserController extends AbstractController
     public function deleteFriend(int $id, #[CurrentUser] UserInterface $user): JsonResponse
     {
         $result = $this->userService->deleteFriend($user, $id);
+
         return $this->json($result);
     }
 
@@ -117,6 +111,7 @@ final class UserController extends AbstractController
     public function deleteUserFriendRequest(int $user_id, int $friend_id): JsonResponse
     {
         $result = $this->userService->deleteFriendRequest($user_id, $friend_id);
+
         return $this->json($result);
     }
 

@@ -44,6 +44,7 @@ final class IndexController extends AbstractController
     public function acceptFriend(int $user_id, int $friend_id): JsonResponse
     {
         $result = $this->userService->acceptFriendRequest($user_id, $friend_id);
+
         return new JsonResponse($result, Response::HTTP_OK);
     }
 

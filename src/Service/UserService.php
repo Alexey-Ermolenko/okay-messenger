@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Entity\Notification;
@@ -149,7 +151,7 @@ final readonly class UserService
         if (!$user) {
             return [
                 'result' => RequestStatus::Error,
-                'notification' => 'Authenticated user not found'
+                'notification' => 'Authenticated user not found',
             ];
         }
 
