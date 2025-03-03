@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Enum\RequestFriendRequestStatus;
-use App\Repository\UserFriendsRequestRepository;
-use App\Repository\UserRepository;
+use App\Enum\NotificationPreference;
+use App\Enum\RequestStatus;
 use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -36,5 +34,14 @@ final class IndexController extends AbstractController
     {
         $result = $this->userService->acceptFriendRequest($user_id, $friend_id);
         return $this->json($result);
+    }
+
+    #[Route('/notification-preferences-list/get', name: 'api_accept_user_friend', methods: [Request::METHOD_GET])]
+    public function getNotificationPreferencesList(Request $request): JsonResponse
+    {
+        return $this->json([
+            'result' => RequestStatus::Success,
+            'notification_preferences' => NotificationPreference::cases(),
+        ]);
     }
 }
