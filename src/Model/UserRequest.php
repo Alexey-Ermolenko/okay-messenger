@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Url;
 
 class UserRequest
 {
@@ -18,6 +19,16 @@ class UserRequest
     #[Email]
     #[Blank]
     private string $email;
+
+    #[Url]
+    #[Blank]
+    private string $telegramAccountLink;
+
+    #[Blank]
+    private string $phoneNumber;
+
+    #[NotBlank]
+    private string $preferredNotificationMethod;
 
     #[NotBlank]
     #[Length(min: 8)]
@@ -72,5 +83,35 @@ class UserRequest
     public function getConfirmPassword(): string
     {
         return $this->confirmPassword;
+    }
+
+    public function getPhoneNumber(): string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(string $phoneNumber): void
+    {
+        $this->phoneNumber = $phoneNumber;
+    }
+
+    public function getTelegramAccountLink(): string
+    {
+        return $this->telegramAccountLink;
+    }
+
+    public function setTelegramAccountLink(string $telegramAccountLink): void
+    {
+        $this->telegramAccountLink = $telegramAccountLink;
+    }
+
+    public function getPreferredNotificationMethod(): string
+    {
+        return $this->preferredNotificationMethod;
+    }
+
+    public function setPreferredNotificationMethod(string $preferredNotificationMethod): void
+    {
+        $this->preferredNotificationMethod = $preferredNotificationMethod;
     }
 }
