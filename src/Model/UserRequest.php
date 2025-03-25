@@ -13,28 +13,27 @@ use Symfony\Component\Validator\Constraints\Url;
 
 class UserRequest
 {
-    #[NotBlank]
+    #[Blank]
     private string $username;
 
     #[Email]
     #[Blank]
-    private string $email;
+    private ?string $email = null;
 
     #[Url]
-    #[Blank]
-    private string $telegramAccountLink;
+    private ?string $telegramAccountLink;
 
     #[Blank]
-    private string $phoneNumber;
+    private ?string $phoneNumber = null;
 
     #[NotBlank]
     private string $preferredNotificationMethod;
 
-    #[NotBlank]
+    #[Blank]
     #[Length(min: 8)]
     private string $password;
 
-    #[NotBlank]
+    #[Blank]
     #[Length(min: 8)]
     #[EqualTo(propertyPath: 'password', message: 'This value should be equal to password field')]
     private string $confirmPassword;
@@ -85,7 +84,7 @@ class UserRequest
         return $this->confirmPassword;
     }
 
-    public function getPhoneNumber(): string
+    public function getPhoneNumber(): ?string
     {
         return $this->phoneNumber;
     }
@@ -95,12 +94,12 @@ class UserRequest
         $this->phoneNumber = $phoneNumber;
     }
 
-    public function getTelegramAccountLink(): string
+    public function getTelegramAccountLink(): ?string
     {
         return $this->telegramAccountLink;
     }
 
-    public function setTelegramAccountLink(string $telegramAccountLink): void
+    public function setTelegramAccountLink(?string $telegramAccountLink): void
     {
         $this->telegramAccountLink = $telegramAccountLink;
     }

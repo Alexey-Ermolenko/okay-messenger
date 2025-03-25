@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
+use App\Enum\NotificationPreference;
+use App\Event\NotificationMethodChangedEvent;
 use App\Repository\UserRepository;
+use App\Service\UserService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
-#[ORM\Table(name: '`user`')]
+#[AllowDynamicProperties] #[ORM\Table(name: '`user`')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -26,11 +31,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', unique: true)]
     private string $email;
 
-    #[ORM\Column(type: 'string', unique: true)]
-    private string $telegramAccountLink;
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
+    private ?string $telegramAccountLink = null;
 
-    #[ORM\Column(type: 'string', unique: true)]
-    private string $phoneNumber;
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
+    private ?string $phoneNumber;
 
     #[ORM\Column(type: 'string', unique: true)]
     private string $preferredNotificationMethod;
@@ -72,6 +77,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[MaxDepth(1)]
     #[ORM\OneToMany(targetEntity: UserFriendsRequest::class, mappedBy: 'friend', cascade: ['remove'])]
     public $receivedRequests;
+
+    private ?EventDispatcherInterface $eventDispatcher = null;
 
     /**
      * SELECT u.id, u.username, f.*
@@ -173,24 +180,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function getTelegramAccountLink(): string
+    public function getTelegramAccountLink(): ?string
     {
         return $this->telegramAccountLink;
     }
 
-    public function setTelegramAccountLink(string $telegramAccountLink): self
+    public function setTelegramAccountLink(?string $telegramAccountLink): self
     {
         $this->telegramAccountLink = $telegramAccountLink;
 
         return $this;
     }
 
-    public function getPhoneNumber(): string
+    public function getPhoneNumber(): ?string
     {
         return $this->phoneNumber;
     }
 
-    public function setPhoneNumber(string $phoneNumber): self
+    public function setPhoneNumber(?string $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
 
@@ -202,9 +209,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->preferredNotificationMethod;
     }
 
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     public function setPreferredNotificationMethod(string $preferredNotificationMethod): self
     {
+        if (
+            $preferredNotificationMethod === NotificationPreference::Telegram->value
+            && $this->telegramAccountLink === null
+        ) {
+            throw new \InvalidArgumentException("Telegram link cannot be null when using Telegram.");
+        }
+
         $this->preferredNotificationMethod = $preferredNotificationMethod;
+
+        $event = new NotificationMethodChangedEvent(
+            $preferredNotificationMethod,
+            $this->getTelegramAccountLink(),
+            $this->getPhoneNumber(),
+            $this->getEmail(),
+        );
+
+        $this->eventDispatcher->dispatch($event);
 
         return $this;
     }

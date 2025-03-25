@@ -7,9 +7,12 @@ namespace App\Service;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Entity\UserFriendsRequest;
+use App\Enum\NotificationPreference;
 use App\Enum\RequestFriendRequestStatus;
 use App\Enum\RequestStatus;
 use App\Message\EmailMessage;
+use App\Message\NotificationMethodMessage;
+use App\Message\TelegramMessage;
 use App\Message\UserFriendRequestMessage;
 use App\Repository\NotificationRepository;
 use App\Repository\UserFriendsRequestRepository;
@@ -229,14 +232,28 @@ final readonly class UserService
 
         $userToSend = $this->userRepository->getUser($recipientId);
 
-        /** @var User $sender */
-        $msg = (string) json_encode([
-            'fromEmail' => $sender->getEmail(),
-            'toEmail' => $userToSend->getEmail(),
-        ]);
+        $message = null;
+
+        if ($userToSend->getPreferredNotificationMethod() === NotificationPreference::Email->value) {
+            /** @var User $sender */
+            $msg = (string) json_encode([
+                'fromEmail' => $sender->getEmail(),
+                'toEmail' => $userToSend->getEmail(),
+            ]);
+            $message = new EmailMessage($msg);
+        }
+
+        if ($userToSend->getPreferredNotificationMethod() === NotificationPreference::Telegram->value) {
+            /** @var User $sender */
+            $tg = (string) json_encode([
+                'from' => $sender->getTelegramAccountLink(),
+                'to' => $userToSend->getTelegramAccountLink(),
+            ]);
+            $message = new TelegramMessage($tg);
+        }
 
         $this->messageBus->dispatch(
-            message: new EmailMessage($msg)
+            message: $message
         );
 
         $notification = new Notification($sender->getId(), $recipientId);

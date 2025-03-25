@@ -27,10 +27,22 @@ framework:
                         email_queue:
                             binding_keys: [email_key]
 
+            set_type_messages:
+                dsn: '%env(MESSENGER_TRANSPORT_SET_TYPE_DSN)%'
+                options:
+                    auto_setup: true
+                    exchange:
+                        name: set_type_messages
+                        default_publish_routing_key: set_type_key
+                    queues:
+                        set_type_queue:
+                            binding_keys: [ set_type_key ]
+
         routing:
             # Route your messages to the transports
             'App\Message\EmailMessage': email_messages
             'App\Message\UserFriendRequestMessage': friend_request_messages
+            'App\Message\NotificationMethodMessage': set_type_messages
 
 # when@test:
 #    framework:
