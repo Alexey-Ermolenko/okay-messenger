@@ -122,4 +122,3 @@ final class LogsController extends AbstractController
         ]);
     }
 }
-

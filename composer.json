@@ -14,6 +14,7 @@
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.0",
+        "fakerphp/faker": "^1.24",
         "friendsofsymfony/rest-bundle": "^3.6",
         "gesdinet/jwt-refresh-token-bundle": "^1.3",
         "lexik/jwt-authentication-bundle": "*",

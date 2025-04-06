@@ -63,7 +63,9 @@ class JwtUserProvider implements PayloadAwareUserProviderInterface
     {
         $user = $this->userRepository->findOneBy([$key => $value]);
         if (null === $user) {
-            $e = new UserNotFoundException('User with id '.json_encode($value, JSON_THROW_ON_ERROR).' not found.');
+            $e = new UserNotFoundException(
+                'User with id '.json_encode($value, JSON_THROW_ON_ERROR).' not found.'
+            );
             $e->setUserIdentifier(json_encode($value, JSON_THROW_ON_ERROR));
 
             throw $e;

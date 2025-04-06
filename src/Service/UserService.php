@@ -1,18 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
+use App\Entity\Notification;
 use App\Entity\User;
 use App\Entity\UserFriendsRequest;
+use App\Enum\NotificationPreference;
 use App\Enum\RequestFriendRequestStatus;
 use App\Enum\RequestStatus;
+use App\Message\EmailMessage;
+use App\Message\NotificationMethodMessage;
+use App\Message\TelegramMessage;
 use App\Message\UserFriendRequestMessage;
+use App\Repository\NotificationRepository;
 use App\Repository\UserFriendsRequestRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 final readonly class UserService
 {
@@ -20,7 +27,8 @@ final readonly class UserService
         private UserRepository $userRepository,
         private UserFriendsRequestRepository $userFriendsRequestRepository,
         private UrlGeneratorInterface $urlGenerator,
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messageBus,
+        private NotificationRepository $notificationRepository,
     ) {
     }
 
@@ -67,17 +75,25 @@ final readonly class UserService
         try {
             $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequest);
 
-            $acceptFriendUrl = $this->urlGenerator->generate(
-                'api_accept_user_friend',
-                ['user_id' => $user->getId(), 'friend_id' => $friend->getId()],
+            $acceptFriendUrl = $this->urlGenerator->generate('api_accept_user_friend',
+                [
+                    'user_id' => $user->getId(),
+                    'friend_id' => $friend->getId(),
+                ],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
 
             $msg = json_encode([
                 'msg' => UserFriendsRequest::class,
                 'acceptFriendUrl' => $acceptFriendUrl,
-                'user' => ['email' => $user->getEmail(), 'id' => $user->getId()],
-                'toFriend' => ['email' => $friend->getEmail(), 'id' => $friend->getId()],
+                'user' => [
+                    'email' => $user->getEmail(),
+                    'id' => $user->getId(),
+                ],
+                'toFriend' => [
+                    'email' => $friend->getEmail(),
+                    'id' => $friend->getId(),
+                ],
             ]);
 
             $this->messageBus->dispatch(new UserFriendRequestMessage($msg));
@@ -138,7 +154,7 @@ final readonly class UserService
         if (!$user) {
             return [
                 'result' => RequestStatus::Error,
-                'notification' => 'Authenticated user not found'
+                'notification' => 'Authenticated user not found',
             ];
         }
 
@@ -200,5 +216,51 @@ final readonly class UserService
             'result' => RequestStatus::Success,
             'notification' => "Friend {$user->getUsername()} added",
         ];
+    }
+
+    public function sendOkay(int $recipientId, UserInterface $sender): string
+    {
+        // TODO: add ok_notification record
+        //  https://ru.linux-console.net/?p=7773&ysclid=lvqe6sikvp803026962
+        //  https://www.youtube.com/watch?v=uc6ev8d6j_M
+        /**
+         * INSERT INTO public.ok_notification (from_user_id, to_user_id, delivered, created_at)
+         * VALUES (1, 6, true, '2024-04-23 22:56:18');.
+         */
+        // TODO: send push notify   to user by userId
+        // TODO: send email message to user by email
+
+        $userToSend = $this->userRepository->getUser($recipientId);
+
+        $message = null;
+
+        if ($userToSend->getPreferredNotificationMethod() === NotificationPreference::Email->value) {
+            /** @var User $sender */
+            $msg = (string) json_encode([
+                'fromEmail' => $sender->getEmail(),
+                'toEmail' => $userToSend->getEmail(),
+            ]);
+            $message = new EmailMessage($msg);
+        }
+
+        if ($userToSend->getPreferredNotificationMethod() === NotificationPreference::Telegram->value) {
+            /** @var User $sender */
+            $tg = (string) json_encode([
+                'from' => $sender->getTelegramAccountLink(),
+                'to' => $userToSend->getTelegramAccountLink(),
+            ]);
+            $message = new TelegramMessage($tg);
+        }
+
+        $this->messageBus->dispatch(
+            message: $message
+        );
+
+        $notification = new Notification($sender->getId(), $recipientId);
+        $notification->setDelivered(true);
+
+        $this->notificationRepository->saveAndCommit($notification);
+
+        return $msg;
     }
 }
