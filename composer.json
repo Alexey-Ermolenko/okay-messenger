@@ -1,4 +1,6 @@
 {
+    "name": "www/ok-messenger",
+    "description": "OK messenger Symfony project",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
