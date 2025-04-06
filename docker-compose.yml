@@ -9,6 +9,7 @@ services:
       volumes:
         - ./:/var/www/ok
         - ./.docker/nginx/localhost.conf:/etc/nginx/conf.d/default.conf
+        - ./.docker/nginx/.htpasswd:/etc/nginx/.htpasswd
       depends_on:
         - php
       networks:

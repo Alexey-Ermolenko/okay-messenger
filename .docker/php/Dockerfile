@@ -13,6 +13,7 @@ RUN apt-get update --fix-missing && \
     libpq-dev \
     libcurl4-nss-dev \
     libonig-dev \
+    libevent-dev \
     libyaml-dev && rm -r /var/lib/apt/lists/* \
     && pecl install xdebug-3.2.0 \
     && docker-php-ext-enable xdebug \
@@ -32,12 +33,16 @@ RUN apt-get update --fix-missing && \
     && docker-php-ext-install pgsql \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install imap \
+    && docker-php-ext-install sockets \
     && pecl install amqp \
     && docker-php-ext-enable amqp \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && pecl install memcache \
     && docker-php-ext-enable memcache
+
+RUN pecl install excimer \
+    && docker-php-ext-enable excimer
 
 WORKDIR /var/www/ok
 

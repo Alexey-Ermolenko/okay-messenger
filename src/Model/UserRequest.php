@@ -9,21 +9,31 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Url;
 
 class UserRequest
 {
-    #[NotBlank]
+    #[Blank]
     private string $username;
 
     #[Email]
     #[Blank]
-    private string $email;
+    private ?string $email = null;
+
+    #[Url]
+    private ?string $telegramAccountLink;
+
+    #[Blank]
+    private ?string $phoneNumber = null;
 
     #[NotBlank]
+    private string $preferredNotificationMethod;
+
+    #[Blank]
     #[Length(min: 8)]
     private string $password;
 
-    #[NotBlank]
+    #[Blank]
     #[Length(min: 8)]
     #[EqualTo(propertyPath: 'password', message: 'This value should be equal to password field')]
     private string $confirmPassword;
@@ -64,9 +74,6 @@ class UserRequest
         return $this;
     }
 
-    /**
-     * @param string $confirmPassword
-     */
     public function setConfirmPassword(string $confirmPassword): void
     {
         $this->confirmPassword = $confirmPassword;
@@ -75,5 +82,35 @@ class UserRequest
     public function getConfirmPassword(): string
     {
         return $this->confirmPassword;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(string $phoneNumber): void
+    {
+        $this->phoneNumber = $phoneNumber;
+    }
+
+    public function getTelegramAccountLink(): ?string
+    {
+        return $this->telegramAccountLink;
+    }
+
+    public function setTelegramAccountLink(?string $telegramAccountLink): void
+    {
+        $this->telegramAccountLink = $telegramAccountLink;
+    }
+
+    public function getPreferredNotificationMethod(): string
+    {
+        return $this->preferredNotificationMethod;
+    }
+
+    public function setPreferredNotificationMethod(string $preferredNotificationMethod): void
+    {
+        $this->preferredNotificationMethod = $preferredNotificationMethod;
     }
 }

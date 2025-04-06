@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
+use App\Enum\NotificationPreference;
+use App\Event\NotificationMethodChangedEvent;
 use App\Repository\UserRepository;
+use App\Service\UserService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
-#[ORM\Table(name: '`user`')]
+#[AllowDynamicProperties] #[ORM\Table(name: '`user`')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -25,6 +30,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', unique: true)]
     private string $email;
+
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
+    private ?string $telegramAccountLink = null;
+
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
+    private ?string $phoneNumber;
+
+    #[ORM\Column(type: 'string', unique: true)]
+    private string $preferredNotificationMethod;
 
     #[ORM\Column(type: 'string')]
     private string $password;
@@ -64,6 +78,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserFriendsRequest::class, mappedBy: 'friend', cascade: ['remove'])]
     public $receivedRequests;
 
+    private ?EventDispatcherInterface $eventDispatcher = null;
+
     /**
      * SELECT u.id, u.username, f.*
      * FROM public.user u
@@ -71,7 +87,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * JOIN public.user f ON uf.friend_id = f.id
      * WHERE u.username = 'user1'.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->friendsWithMe = new ArrayCollection();
         $this->myFriends = new ArrayCollection();
         $this->sentRequests = new ArrayCollection();
@@ -161,5 +178,62 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email;
+    }
+
+    public function getTelegramAccountLink(): ?string
+    {
+        return $this->telegramAccountLink;
+    }
+
+    public function setTelegramAccountLink(?string $telegramAccountLink): self
+    {
+        $this->telegramAccountLink = $telegramAccountLink;
+
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    public function getPreferredNotificationMethod(): string
+    {
+        return $this->preferredNotificationMethod;
+    }
+
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function setPreferredNotificationMethod(string $preferredNotificationMethod): self
+    {
+        if (
+            $preferredNotificationMethod === NotificationPreference::Telegram->value
+            && $this->telegramAccountLink === null
+        ) {
+            throw new \InvalidArgumentException("Telegram link cannot be null when using Telegram.");
+        }
+
+        $this->preferredNotificationMethod = $preferredNotificationMethod;
+
+        $event = new NotificationMethodChangedEvent(
+            $preferredNotificationMethod,
+            $this->getTelegramAccountLink(),
+            $this->getPhoneNumber(),
+            $this->getEmail(),
+        );
+
+        $this->eventDispatcher->dispatch($event);
+
+        return $this;
     }
 }

@@ -52,4 +52,10 @@ services:
     App\Service\UploadService:
         arguments: ['@filesystem', '%uploadDir%']
 
+    App\EventListener\NotificationMethodChangedListener:
+        tags:
+            - name: kernel.event_listener
+              event: App\Event\NotificationMethodChangedEvent
+              method: onNotificationMethodChanged
+
     Redis: '@snc_redis.default'

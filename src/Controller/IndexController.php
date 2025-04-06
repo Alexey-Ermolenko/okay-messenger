@@ -4,81 +4,62 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Enum\RequestFriendRequestStatus;
-use App\Repository\UserFriendsRequestRepository;
-use App\Repository\UserRepository;
+use App\Enum\NotificationPreference;
+use App\Enum\RequestStatus;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/v1', name: 'api_index')]
+#[Route(
+    path: '/api/v1',
+    name: 'api_index',
+)]
 final class IndexController extends AbstractController
 {
     public const SUCCESS_BODY = ['result' => 'success'];
 
     public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly UserFriendsRequestRepository $userFriendsRequestRepository,
+        private readonly UserService $userService,
     ) {
     }
 
-    #[Route('/healthcheck/ping', name: 'healthcheck_ping', methods: [Request::METHOD_GET])]
+    #[Route(
+        path: '/healthcheck/ping',
+        name: 'healthcheck_ping',
+        methods: [Request::METHOD_GET],
+    )]
     public function ping(): JsonResponse
     {
         return new JsonResponse(self::SUCCESS_BODY, Response::HTTP_OK);
     }
 
-    #[Route('/accept/user/{user_id}/friend/{friend_id}', name: 'api_accept_user_friend', methods: [Request::METHOD_GET])]
-    public function acceptFriend(int $user_id, int $friend_id): Response
+    #[Route(
+        path: '/accept/user/{user_id}/friend/{friend_id}',
+        name: 'api_accept_user_friend',
+        methods: [Request::METHOD_GET],
+    )]
+    public function acceptFriend(int $user_id, int $friend_id): JsonResponse
     {
-        //TODO:
-        //  check friend_request by friend_id and user_id
-        //  if friend_request by friend_id and user_id is exists and accepted == false
-        //  ...
-        //  then addFriend and friend_request set accepted = true
-        //  else throw error message
-        //  ...
-        //  http://localhost:8080/api/v1/user/friend/accept/user/9/friend/11
-        //  ...
-        //  INSERT INTO public.user_friends_request
-        //  (id, requested_at, responded_at, user_id, friend_id, accepted)
-        //  VALUES
-        //  (44, '2025-01-02 19:41:29', null, 11, 9, false);
+        $result = $this->userService->acceptFriendRequest($user_id, $friend_id);
 
-        /** @var User $user */
-        $user = $this->userRepository->find($user_id);
-        /** @var User $friend */
-        $friend = $this->userRepository->find($friend_id);
+        return new JsonResponse($result, Response::HTTP_OK);
+    }
 
-        if ($user && $friend) {
-            //TODO: найти userFriendsRequestRepository которые равны pending
-            $userFriendsRequestRepository = $this->userFriendsRequestRepository->findOneBy([
-                'user_id' => $user_id,
-                'friend_id' => $friend_id,
-                'accepted' => [
-                    RequestFriendRequestStatus::pending->value,
-                    RequestFriendRequestStatus::deleted->value,
-                ],
-            ]);
-
-            if ($userFriendsRequestRepository) {
-                $resultUser = $user->addFriend($friend);
-                $userFriendsRequestRepository->setAccepted(RequestFriendRequestStatus::accepted->value);
-
-                $this->userFriendsRequestRepository->saveAndCommit($userFriendsRequestRepository);
-                $this->userRepository->saveAndCommit($resultUser);
-
-                return new Response(
-                    '<html><body>Friend ' . $user->getUsername() . ' added</body></html>'
-                );
-            }
-        }
-
-        return new Response(
-            '<html><body>Failed</body></html>'
+    #[Route(
+        path: '/notification-preferences-list/get',
+        name: 'api_accept_user_friend',
+        methods: [Request::METHOD_GET],
+    )]
+    public function getNotificationPreferencesList(): JsonResponse
+    {
+        return new JsonResponse([
+            'result' => RequestStatus::Success,
+            'notification_preferences' => NotificationPreference::cases(),
+        ],
+            Response::HTTP_OK,
         );
     }
 }

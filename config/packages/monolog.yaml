@@ -62,6 +62,12 @@ when@prod:
                 channels: [deprecation]
                 path: php://stderr
                 formatter: monolog.formatter.json
+            sentry:
+                type: sentry
+                level: !php/const Monolog\Logger::ERROR
+                hub_id: Sentry\State\HubInterface
+                fill_extra_context: true
+
 #            doctrine:
 #                type: stream
 #                path: "%kernel.logs_dir%/doctrine.log"

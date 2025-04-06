@@ -100,7 +100,10 @@ class MonologDBHandler extends AbstractHandler
             return;
         }
 
-        $logs = array_map(fn (LogRecord $record): LogDTO => $this->prepareRecord($record), $records);
+        $logs = array_map(
+            fn (LogRecord $record): RawLogDTO => $this->prepareRecord($record),
+            $records
+        );
 
         try {
             $this->logsWriter->writeBatch($logs);

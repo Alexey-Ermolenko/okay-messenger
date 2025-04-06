@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use OpenApi\Annotations as SWG;
 
 #[Route('/api/v1/logs', name: 'api_logs')]
 final class LogsController extends AbstractController
@@ -81,6 +80,7 @@ final class LogsController extends AbstractController
      *
      * @param UserInterface $user
      *
+     * @return JsonResponse
      * @throws Exception
      */
     #[Route('/user/notifications/my', name: 'api_logs_notifications', methods: [Request::METHOD_GET])]
@@ -100,7 +100,8 @@ final class LogsController extends AbstractController
      * @SWG\Response (response=200, description="Giving logs list by notification")
      *
      * @param UserInterface $user
-     *
+     * @param string $since
+     * @return JsonResponse
      * @throws Exception
      */
     #[Route(
@@ -111,13 +112,9 @@ final class LogsController extends AbstractController
     )]
     public function getRequestsLogs(#[CurrentUser] UserInterface $user, string $since): JsonResponse
     {
-        $id = (string) $user->getId();
-
         $sinceDatetime = DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', $since)
             ?: DateTimeImmutable::createFromFormat('Y-m-d', $since)
             ?: null;
-
-        // /return $this->json($this->logService->findRequestsLogs($id, $sinceDatetime));
 
         return $this->json([
             'result' => RequestStatus::Success,

@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Model\UserRequest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
@@ -27,6 +28,7 @@ class UserRepository extends ServiceEntityRepository
     public function __construct(
         private readonly ManagerRegistry $registry,
         private readonly UserPasswordHasherInterface $hasher,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
         parent::__construct($registry, User::class);
         $this->_entityName = User::class;
@@ -48,30 +50,6 @@ class UserRepository extends ServiceEntityRepository
         return $user;
     }
 
-    //    /** @throws Exception
-    //     * @throws \Doctrine\DBAL\Exception
-    //     */
-    //    public function deleteFriend(int $id): void
-    //    {
-    //        /** @var Connection $connection */
-    //        $connection = $this->registry->getConnection();
-    //        $connection->delete('user_friends', ['friend_id' => $id]);
-    //    }
-    //
-    //    /** @throws Exception
-    //     * @throws \Doctrine\DBAL\Exception
-    //     */
-    //    public function addFriend(int $id): void
-    //    {
-    //        $data = [
-    //            'user_id' => $rule['payment_method_id'] ?? null,
-    //            'friend_id' => $rule['payment_type'] ?? null,
-    //        ];
-    //
-    //        /** @var Connection $connection */
-    //        $connection = $this->registry->getConnection();
-    //        $connection->insert('user_friends', $data);
-    //    }
     public function update(int $userId, UserRequest $userRequest): User
     {
         $user = $this->find($userId);
@@ -81,8 +59,18 @@ class UserRepository extends ServiceEntityRepository
         }
 
         $user->setUsername($userRequest->getUsername());
-        $user->setPassword($this->hasher->hashPassword($user, $userRequest->getPassword()));
 
+        if ($userRequest->getPassword()) {
+            $user->setPassword($this->hasher->hashPassword($user, $userRequest->getPassword()));
+        }
+
+        $user->setPhoneNumber($userRequest->getPhoneNumber());
+        $user->setEmail($userRequest->getEmail());
+        $user->setUsername($userRequest->getUsername());
+        $user->setTelegramAccountLink($userRequest->getTelegramAccountLink());
+
+        $user->setEventDispatcher($this->eventDispatcher);
+        $user->setPreferredNotificationMethod($userRequest->getPreferredNotificationMethod());
         $this->saveAndCommit($user);
 
         return $user;

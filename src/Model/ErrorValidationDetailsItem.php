@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-class ErrorValidationDetailsItem
+final readonly class ErrorValidationDetailsItem
 {
-    public function __construct(private readonly string $field, private readonly string $message)
-    {
+    public function __construct(
+        private string $field,
+        private string $message
+    ) {
     }
 
     public function getField(): string
