@@ -232,6 +232,7 @@ final readonly class UserService
 
         $userToSend = $this->userRepository->getUser($recipientId);
 
+        $msg = null;
         $message = null;
 
         if ($userToSend->getPreferredNotificationMethod() === NotificationPreference::Email->value) {
@@ -245,11 +246,11 @@ final readonly class UserService
 
         if ($userToSend->getPreferredNotificationMethod() === NotificationPreference::Telegram->value) {
             /** @var User $sender */
-            $tg = (string) json_encode([
+            $msg = (string) json_encode([
                 'from' => $sender->getTelegramAccountLink(),
                 'to' => $userToSend->getTelegramAccountLink(),
             ]);
-            $message = new TelegramMessage($tg);
+            $message = new TelegramMessage($msg);
         }
 
         $this->messageBus->dispatch(
