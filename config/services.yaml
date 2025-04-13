@@ -58,4 +58,8 @@ services:
               event: App\Event\NotificationMethodChangedEvent
               method: onNotificationMethodChanged
 
+    App\Command\FlushLogsToDatabaseCommand:
+        arguments:
+            $redis: '@snc_redis.raw_log'
+
     Redis: '@snc_redis.default'

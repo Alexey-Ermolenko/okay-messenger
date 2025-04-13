@@ -11,6 +11,9 @@ final class BufferKeyHelper
     public const REQUEST_PREFIX = 'raw_log_request';
     public const REFERENCE_PREFIX = 'raw_log_reference';
 
+    public const ENTITY_REQUEST_PREFIX = 'entity_log_request';
+    public const ENTITY_REFERENCE_PREFIX = 'entity_log_reference';
+
     public static function makeUid(): string
     {
         /** @noinspection PhpUnhandledExceptionInspection */
@@ -24,14 +27,31 @@ final class BufferKeyHelper
             ?? $key;
     }
 
+    public static function getEntityUidFromKey(string $key): string
+    {
+        return self::trimPrefix($key, self::ENTITY_REQUEST_PREFIX)
+            ?? self::trimPrefix($key, self::ENTITY_REFERENCE_PREFIX)
+            ?? $key;
+    }
+
     public static function makeRequestKey(string $uid): string
     {
         return self::REQUEST_PREFIX . ':' . $uid;
     }
 
+    public static function makeEntityRequestKey(string $uid): string
+    {
+        return self::ENTITY_REQUEST_PREFIX . ':' . $uid;
+    }
+
     public static function makeReferenceKey(string $uid): string
     {
         return self::REFERENCE_PREFIX . ':' . $uid;
+    }
+
+    public static function makeEntityReferenceKey(string $uid): string
+    {
+        return self::ENTITY_REFERENCE_PREFIX . ':' . $uid;
     }
 
     private static function trimPrefix(string $key, string $prefix): ?string

@@ -65,22 +65,6 @@ final readonly class LogBufferWriter
         return $this->writeLog(BufferKeyHelper::makeUid(), $data);
     }
 
-    public function writeEntityLog(LogDTO $log): bool
-    {
-        $data = [
-            'entity_type' => $log->entityType,
-            'entity_id' => $log->entityId,
-            'action' => $log->action,
-            'data' => $log->data,
-            'created_at' => $log->createdAt,
-            'user_id' => $log->user_id,
-            'ip_address' => $log->ipAddress,
-            'route' => $log->requestRoute,
-        ];
-
-        return $this->writeLog(BufferKeyHelper::makeUid(), $data);
-    }
-
     /** @throws RedisException */
     public function deleteLogBuffer(string $requestId): void
     {

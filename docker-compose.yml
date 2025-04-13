@@ -27,7 +27,6 @@ services:
         - ./.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       environment:
         APP_ENV: dev
-        DATABASE_URL: pgsql://root:root@db:5432/ok
         PHP_IDE_CONFIG: "serverName=Project"
         XDEBUG_SESSION: PHPSTORM
       networks:

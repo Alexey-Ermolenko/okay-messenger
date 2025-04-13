@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Util;
 
 use App\DTO\LogDTO;
-use App\DTO\RawLogDTO;
 use App\Util\RawLogBuffer\BufferKeyHelper;
 use JsonException;
 use Psr\Log\LoggerInterface;
@@ -33,7 +32,7 @@ final readonly class EntityLogBufferWriter
 
     private function writeLog(string $requestId, array $data): bool
     {
-        $requestKey = BufferKeyHelper::makeRequestKey($requestId);
+        $requestKey = BufferKeyHelper::makeEntityRequestKey($requestId);
 
         try {
             /** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -44,7 +43,7 @@ final readonly class EntityLogBufferWriter
 
             $this->redis->exec();
         } catch (RedisException $e) {
-            $this->logger->error('Failed to write raw log to Redis: ' . $e->getMessage());
+            $this->logger->error('Failed to write entity log to Redis: ' . $e->getMessage());
             return false;
         }
 
@@ -68,11 +67,11 @@ final readonly class EntityLogBufferWriter
     }
 
     /** @throws RedisException */
-    public function deleteLogBuffer(string $requestId): void
+    public function deleteEntityLogBuffer(string $requestId): void
     {
         $this->redis->del(
-            BufferKeyHelper::makeRequestKey($requestId),
-            BufferKeyHelper::makeReferenceKey($requestId),
+            BufferKeyHelper::makeEntityRequestKey($requestId),
+            BufferKeyHelper::makeEntityReferenceKey($requestId),
         );
     }
 }

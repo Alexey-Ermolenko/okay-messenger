@@ -5,6 +5,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 RUN apt-get update --fix-missing && \
     apt-get install -y \
     git unzip \
+    supervisor \
     libc-client-dev \
     libssh-dev \
     librabbitmq-dev \
@@ -47,3 +48,7 @@ RUN pecl install excimer \
 WORKDIR /var/www/ok
 
 #COPY xdebug.ini /usr/local/etc/php/
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
