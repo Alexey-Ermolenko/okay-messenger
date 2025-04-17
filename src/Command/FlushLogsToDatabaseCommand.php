@@ -24,8 +24,8 @@ class FlushLogsToDatabaseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $batchSize = 100;
-        $sleepSeconds = 5;
+        $batchSize = 30;
+        $sleepSeconds = 10;
 
         $output->writeln(
             '<info>Long-runner is running. Every '
@@ -59,7 +59,7 @@ class FlushLogsToDatabaseCommand extends Command
                     }
                 } while ($iterator !== 0);
 
-                if (count($logs) > 0) {
+                if (count($logs) >= $batchSize) {
                     $sql = "INSERT INTO raw_logs (
                         requested_at,
                         responded_at,

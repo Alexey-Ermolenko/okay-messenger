@@ -51,4 +51,7 @@ WORKDIR /var/www/ok
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+RUN mkdir -p /var/log/supervisor /var/log/php /var/log && \
+    touch /var/log/php-fpm.err.log /var/log/php-fpm.out.log
+
 CMD ["supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
