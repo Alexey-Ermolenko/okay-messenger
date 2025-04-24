@@ -14,7 +14,7 @@ final class LogsWriter
     private const PGSQL = 'postgresql';
 
     public function __construct(
-        private readonly ManagerRegistry $managerRegistry
+        private readonly ManagerRegistry $managerRegistry,
     ) {
     }
 

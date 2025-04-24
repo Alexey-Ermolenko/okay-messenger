@@ -12,7 +12,7 @@ class UploadService
 
     public function __construct(
         private readonly Filesystem $fs,
-        private readonly string $uploadDir
+        private readonly string $uploadDir,
     ) {
     }
 }

@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
 final readonly class RawLogsWriter
 {
     public function __construct(
-        private ManagerRegistry $managerRegistry
+        private ManagerRegistry $managerRegistry,
     ) {
     }
 

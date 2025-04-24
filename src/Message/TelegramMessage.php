@@ -7,7 +7,7 @@ namespace App\Message;
 final readonly class TelegramMessage
 {
     public function __construct(
-        private string $content
+        private string $content,
     ) {
     }
 

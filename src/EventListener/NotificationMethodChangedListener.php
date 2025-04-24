@@ -19,7 +19,7 @@ class NotificationMethodChangedListener
 
     public function onNotificationMethodChanged(NotificationMethodChangedEvent $event): void
     {
-        //Sending to telegram service for matching userLink and userId for further sending of messages
+        // Sending to telegram service for matching userLink and userId for further sending of messages
         $message = new NotificationMethodMessage(
             $event->getPreferredNotificationMethod(),
             $event->getTelegramAccountLink(),
@@ -29,12 +29,12 @@ class NotificationMethodChangedListener
 
         $this->messageBus->dispatch($message);
 
-        //Sending to emailService for notify the user that the preferred method of communication has been switched
-        //and further sending of the bot for mailing
-//        $telegramNotificationsTypeMessage = new SettedTelegramNotificationsTypeMessage(
-//            $event->getTelegramAccountLink(),
-//            $event->getPreferredNotificationMethod(),
-//        );
-//        $this->messageBus->dispatch($telegramNotificationsTypeMessage);
+        // Sending to emailService for notify the user that the preferred method of communication has been switched
+        // and further sending of the bot for mailing
+        //        $telegramNotificationsTypeMessage = new SettedTelegramNotificationsTypeMessage(
+        //            $event->getTelegramAccountLink(),
+        //            $event->getPreferredNotificationMethod(),
+        //        );
+        //        $this->messageBus->dispatch($telegramNotificationsTypeMessage);
     }
 }

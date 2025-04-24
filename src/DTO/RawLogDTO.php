@@ -7,7 +7,7 @@ namespace App\DTO;
 final readonly class RawLogDTO
 {
     public function __construct(
-        public ?int    $id = null,
+        public ?int $id = null,
         public ?string $requestedAt = null,
         public ?string $respondedAt = null,
         public ?string $status = null,

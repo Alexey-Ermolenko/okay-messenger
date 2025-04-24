@@ -7,7 +7,7 @@ namespace App\Message;
 final class UserFriendRequestMessage
 {
     public function __construct(
-        private readonly string $content
+        private readonly string $content,
     ) {
     }
 

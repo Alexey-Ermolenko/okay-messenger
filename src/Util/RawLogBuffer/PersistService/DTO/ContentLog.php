@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Util\RawLogBuffer\PersistService\DTO;
 
-
 final readonly class ContentLog
 {
     public function __construct(

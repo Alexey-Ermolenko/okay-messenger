@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use AllowDynamicProperties;
 use App\Enum\NotificationPreference;
 use App\Event\NotificationMethodChangedEvent;
 use App\Repository\UserRepository;
-use App\Service\UserService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -16,7 +14,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
-#[AllowDynamicProperties] #[ORM\Table(name: '`user`')]
+#[\AllowDynamicProperties] #[ORM\Table(name: '`user`')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -218,9 +216,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (
             $preferredNotificationMethod === NotificationPreference::Telegram->value
-            && $this->telegramAccountLink === null
+            && null === $this->telegramAccountLink
         ) {
-            throw new \InvalidArgumentException("Telegram link cannot be null when using Telegram.");
+            throw new \InvalidArgumentException('Telegram link cannot be null when using Telegram.');
         }
 
         $this->preferredNotificationMethod = $preferredNotificationMethod;

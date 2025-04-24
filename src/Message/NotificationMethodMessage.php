@@ -7,7 +7,7 @@ namespace App\Message;
 final readonly class NotificationMethodMessage
 {
     public function __construct(
-        private string  $preferredNotificationMethod,
+        private string $preferredNotificationMethod,
         private ?string $telegramAccountLink,
         private ?string $phoneNumber,
         private ?string $email,

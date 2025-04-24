@@ -54,9 +54,6 @@ final class LogsController extends AbstractController
      *     description="Giving logs list by auth user"
      * )
      *
-     * @param UserInterface $user
-     *
-     * @return JsonResponse
      * @throws Exception
      */
     #[Route('/user/my', name: 'api_logs_auth_users', methods: [Request::METHOD_GET])]
@@ -78,9 +75,6 @@ final class LogsController extends AbstractController
      *     description="Giving logs list by notifications"
      * )
      *
-     * @param UserInterface $user
-     *
-     * @return JsonResponse
      * @throws Exception
      */
     #[Route('/user/notifications/my', name: 'api_logs_notifications', methods: [Request::METHOD_GET])]
@@ -99,9 +93,6 @@ final class LogsController extends AbstractController
      *
      * @SWG\Response (response=200, description="Giving logs list by notification")
      *
-     * @param UserInterface $user
-     * @param string $since
-     * @return JsonResponse
      * @throws Exception
      */
     #[Route(

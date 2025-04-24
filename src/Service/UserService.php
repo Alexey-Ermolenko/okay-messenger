@@ -11,7 +11,6 @@ use App\Enum\NotificationPreference;
 use App\Enum\RequestFriendRequestStatus;
 use App\Enum\RequestStatus;
 use App\Message\EmailMessage;
-use App\Message\NotificationMethodMessage;
 use App\Message\TelegramMessage;
 use App\Message\UserFriendRequestMessage;
 use App\Repository\NotificationRepository;

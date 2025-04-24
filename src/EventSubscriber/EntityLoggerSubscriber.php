@@ -24,12 +24,12 @@ class EntityLoggerSubscriber implements EventSubscriberInterface
 {
     public const IGNORED_ATTRIBUTES_CONTEXT = [
         'ignored_attributes' => [
-                'password',
-                'userIdentifier',
-                '__initializer__',
-                '__cloner__',
-                '__isInitialized__',
-            ],
+            'password',
+            'userIdentifier',
+            '__initializer__',
+            '__cloner__',
+            '__isInitialized__',
+        ],
     ];
 
     // Thanks to PHP 8's constructor property promotion and 8.1's readonly properties, we can
@@ -37,7 +37,7 @@ class EntityLoggerSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly EntityLoggerService $entityLogger,
         private readonly SerializerInterface $serializer,
-        private $removals = []
+        private $removals = [],
     ) {
     }
 

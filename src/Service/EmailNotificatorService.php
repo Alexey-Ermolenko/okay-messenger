@@ -11,7 +11,7 @@ use Symfony\Component\Mime\Email;
 class EmailNotificatorService
 {
     public function __construct(
-        private readonly MailerInterface $mailer
+        private readonly MailerInterface $mailer,
     ) {
     }
 

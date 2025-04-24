@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace App\Util\RawLogBuffer;
 
-use App\DTO\LogDTO;
 use App\DTO\RawLogDTO;
-use JsonException;
 use Psr\Log\LoggerInterface;
-use Redis;
-use RedisException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class LogBufferWriter
 {
     public function __construct(
         #[Autowire(service: 'snc_redis.raw_log')]
-        private Redis $redis,
+        private \Redis $redis,
         private LoggerInterface $logger,
     ) {
     }
@@ -25,7 +21,7 @@ final readonly class LogBufferWriter
     {
         try {
             return json_encode($headers, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
+        } catch (\JsonException $e) {
             return $e->getMessage();
         }
     }
@@ -35,15 +31,16 @@ final readonly class LogBufferWriter
         $requestKey = BufferKeyHelper::makeRequestKey($requestId);
 
         try {
-            /** @noinspection PhpRedundantOptionalArgumentInspection */
-            $this->redis->multi(Redis::MULTI);
+            /* @noinspection PhpRedundantOptionalArgumentInspection */
+            $this->redis->multi(\Redis::MULTI);
             foreach ($data as $key => $value) {
                 $this->redis->hSet($requestKey, $key, $value);
             }
 
             $this->redis->exec();
-        } catch (RedisException $e) {
-            $this->logger->error('Failed to write raw log to Redis: ' . $e->getMessage());
+        } catch (\RedisException $e) {
+            $this->logger->error('Failed to write raw log to Redis: '.$e->getMessage());
+
             return false;
         }
 
@@ -65,7 +62,7 @@ final readonly class LogBufferWriter
         return $this->writeLog(BufferKeyHelper::makeUid(), $data);
     }
 
-    /** @throws RedisException */
+    /** @throws \RedisException */
     public function deleteLogBuffer(string $requestId): void
     {
         $this->redis->del(

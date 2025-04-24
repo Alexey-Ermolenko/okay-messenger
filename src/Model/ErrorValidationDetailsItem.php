@@ -8,7 +8,7 @@ final readonly class ErrorValidationDetailsItem
 {
     public function __construct(
         private string $field,
-        private string $message
+        private string $message,
     ) {
     }
 

@@ -16,7 +16,7 @@ final class BufferKeyHelper
 
     public static function makeUid(): string
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
+        /* @noinspection PhpUnhandledExceptionInspection */
         return substr(bin2hex(random_bytes(self::UID_LENGTH / 2)), 0, self::UID_LENGTH);
     }
 
@@ -36,22 +36,22 @@ final class BufferKeyHelper
 
     public static function makeRequestKey(string $uid): string
     {
-        return self::REQUEST_PREFIX . ':' . $uid;
+        return self::REQUEST_PREFIX.':'.$uid;
     }
 
     public static function makeEntityRequestKey(string $uid): string
     {
-        return self::ENTITY_REQUEST_PREFIX . ':' . $uid;
+        return self::ENTITY_REQUEST_PREFIX.':'.$uid;
     }
 
     public static function makeReferenceKey(string $uid): string
     {
-        return self::REFERENCE_PREFIX . ':' . $uid;
+        return self::REFERENCE_PREFIX.':'.$uid;
     }
 
     public static function makeEntityReferenceKey(string $uid): string
     {
-        return self::ENTITY_REFERENCE_PREFIX . ':' . $uid;
+        return self::ENTITY_REFERENCE_PREFIX.':'.$uid;
     }
 
     private static function trimPrefix(string $key, string $prefix): ?string

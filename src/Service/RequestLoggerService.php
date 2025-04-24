@@ -15,7 +15,7 @@ final class RequestLoggerService
     private const DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     public function __construct(
-        #private readonly RawLogsWriter   $logsWriter,
+        // private readonly RawLogsWriter   $logsWriter,
         private readonly LogBufferWriter $bufferWriter,
     ) {
     }
@@ -36,7 +36,7 @@ final class RequestLoggerService
         Request $request,
         Response $response,
         \DateTimeImmutable $requestedAt,
-        \DateTimeImmutable $respondedAt
+        \DateTimeImmutable $respondedAt,
     ): void {
         $record = new RawLogDTO(
             id: null,

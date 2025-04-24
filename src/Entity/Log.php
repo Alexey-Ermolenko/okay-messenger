@@ -1,5 +1,6 @@
 <?php
-//TODO: delete model
+
+// TODO: delete model
 declare(strict_types=1);
 
 namespace App\Entity;

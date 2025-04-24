@@ -23,7 +23,7 @@ class NotificationRepository extends ServiceEntityRepository
     public mixed $_em;
 
     public function __construct(
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
     ) {
         parent::__construct($registry, Notification::class);
         $this->_entityName = Notification::class;

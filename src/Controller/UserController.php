@@ -11,8 +11,7 @@ use App\Model\ErrorResponse;
 use App\Model\UserRequest;
 use App\Repository\UserRepository;
 use App\Service\UserService;
-use Exception;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -50,7 +49,7 @@ final class UserController extends AbstractController
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     #[Route(path: '/update/{id}', name: 'api_user_update', methods: [Request::METHOD_POST])]
     #[OA\Response(response: 200, description: 'Updates a user', attachables: [new Model(type: User::class)])]
@@ -73,11 +72,6 @@ final class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @param int $id
-     * @param UserInterface $user
-     * @return JsonResponse
-     */
     #[Route(
         path: '/friend/send-request/{id}',
         name: 'api_user_friend_send_request',
@@ -90,11 +84,6 @@ final class UserController extends AbstractController
         return $this->json($result);
     }
 
-    /**
-     * @param int $id
-     * @param UserInterface $user
-     * @return JsonResponse
-     */
     #[Route(
         path: '/friend/delete/{id}',
         name: 'api_user_delete_friend',

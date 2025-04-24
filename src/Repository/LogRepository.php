@@ -1,5 +1,6 @@
 <?php
-//TODO: delete
+
+// TODO: delete
 declare(strict_types=1);
 
 namespace App\Repository;
@@ -23,7 +24,7 @@ class LogRepository extends ServiceEntityRepository
     public mixed $_em;
 
     public function __construct(
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
     ) {
         parent::__construct($registry, Log::class);
         $this->_entityName = Log::class;

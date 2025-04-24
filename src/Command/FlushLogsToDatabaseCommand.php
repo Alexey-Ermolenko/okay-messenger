@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use Doctrine\DBAL\Connection;
-use Redis;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,8 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FlushLogsToDatabaseCommand extends Command
 {
     public function __construct(
-        private readonly Redis $redis,
-        private readonly Connection $connection
+        private readonly \Redis $redis,
+        private readonly Connection $connection,
     ) {
         parent::__construct();
     }
@@ -29,8 +30,8 @@ class FlushLogsToDatabaseCommand extends Command
 
         $output->writeln(
             '<info>Long-runner is running. Every '
-            . $sleepSeconds
-            . ' seconds it will try to flush logs from Redis (via SCAN).</info>'
+            .$sleepSeconds
+            .' seconds it will try to flush logs from Redis (via SCAN).</info>'
         );
 
         while (true) {
@@ -41,7 +42,7 @@ class FlushLogsToDatabaseCommand extends Command
                 $processedKeys = [];
 
                 do {
-                    $this->redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
+                    $this->redis->setOption(\Redis::OPT_SCAN, \Redis::SCAN_RETRY);
 
                     $keys = $this->redis->scan($iterator, 'raw_log_request:*', $count);
 
@@ -57,10 +58,10 @@ class FlushLogsToDatabaseCommand extends Command
                             break 2;
                         }
                     }
-                } while ($iterator !== 0);
+                } while (0 !== $iterator);
 
                 if (count($logs) >= $batchSize) {
-                    $sql = "INSERT INTO raw_logs (
+                    $sql = 'INSERT INTO raw_logs (
                         requested_at,
                         responded_at,
                         status,
@@ -68,12 +69,12 @@ class FlushLogsToDatabaseCommand extends Command
                         request_body,
                         response_headers,
                         response_body
-                    ) VALUES ";
+                    ) VALUES ';
 
                     $values = [];
                     $params = [];
                     foreach ($logs as $log) {
-                        $values[] = "(?, ?, ?, ?, ?, ?, ?)";
+                        $values[] = '(?, ?, ?, ?, ?, ?, ?)';
                         $params[] = $log['requested_at'] ?? null;
                         $params[] = $log['responded_at'] ?? null;
                         $params[] = $log['status'] ?? null;
@@ -91,7 +92,7 @@ class FlushLogsToDatabaseCommand extends Command
                         $this->redis->del($key);
                     }
 
-                    $msg = '<info>Recorded ' . count($logs) . ' raw logs into DB and deleted from Redis.</info>';
+                    $msg = '<info>Recorded '.count($logs).' raw logs into DB and deleted from Redis.</info>';
 
                     $output->writeln($msg);
                 } else {
@@ -100,7 +101,7 @@ class FlushLogsToDatabaseCommand extends Command
 
                 sleep($sleepSeconds);
             } catch (\Throwable $e) {
-                $output->writeln('<error>Error: ' . $e->getMessage() . '</error>');
+                $output->writeln('<error>Error: '.$e->getMessage().'</error>');
                 sleep($sleepSeconds);
             }
         }

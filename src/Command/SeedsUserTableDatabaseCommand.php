@@ -26,7 +26,7 @@ class SeedsUserTableDatabaseCommand extends Command
 {
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
-        private readonly ManagerRegistry $managerRegistry
+        private readonly ManagerRegistry $managerRegistry,
     ) {
         parent::__construct();
     }

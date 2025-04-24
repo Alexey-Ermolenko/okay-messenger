@@ -17,7 +17,7 @@ readonly class SignUpService
     public function __construct(
         private UserPasswordHasherInterface $hasher,
         private UserRepository $userRepository,
-        private AuthenticationSuccessHandler $successHandler
+        private AuthenticationSuccessHandler $successHandler,
     ) {
     }
 

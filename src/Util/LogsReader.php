@@ -14,7 +14,7 @@ final class LogsReader
     private const LIMIT = 100;
 
     public function __construct(
-        private readonly ManagerRegistry $managerRegistry
+        private readonly ManagerRegistry $managerRegistry,
     ) {
     }
 
