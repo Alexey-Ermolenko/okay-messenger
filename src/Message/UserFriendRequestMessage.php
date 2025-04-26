@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-final class UserFriendRequestMessage
+final readonly class UserFriendRequestMessage
 {
     public function __construct(
-        private readonly string $content,
+        private string $content,
     ) {
     }
 

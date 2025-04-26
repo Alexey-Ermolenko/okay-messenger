@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-final class EmailMessage
+final readonly class EmailMessage
 {
     public function __construct(
-        private readonly string $content,
+        private string $content,
     ) {
     }
 

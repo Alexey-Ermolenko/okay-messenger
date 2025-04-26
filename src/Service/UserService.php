@@ -16,6 +16,9 @@ use App\Message\UserFriendRequestMessage;
 use App\Repository\NotificationRepository;
 use App\Repository\UserFriendsRequestRepository;
 use App\Repository\UserRepository;
+use App\Service\NotificationStrategy\NotificationStrategy;
+use App\Service\NotificationStrategy\Strategy\EmailNotificationStrategy;
+use App\Service\NotificationStrategy\Strategy\TelegramNotificationStrategy;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -231,36 +234,21 @@ final readonly class UserService
 
         $userToSend = $this->userRepository->getUser($recipientId);
 
-        $msg = null;
-        $message = null;
+	    $strategy = match ($userToSend->getPreferredNotificationMethod()) {
+		    NotificationPreference::Email->value => new EmailNotificationStrategy($this->messageBus),
+		    NotificationPreference::Telegram->value => new TelegramNotificationStrategy($this->messageBus),
+		    default => throw new \InvalidArgumentException('Unsupported notification method'),
+	    };
 
-        if ($userToSend->getPreferredNotificationMethod() === NotificationPreference::Email->value) {
-            /** @var User $sender */
-            $msg = (string) json_encode([
-                'fromEmail' => $sender->getEmail(),
-                'toEmail' => $userToSend->getEmail(),
-            ]);
-            $message = new EmailMessage($msg);
-        }
+	    $notificationContext = new NotificationStrategy($strategy);
 
-        if ($userToSend->getPreferredNotificationMethod() === NotificationPreference::Telegram->value) {
-            /** @var User $sender */
-            $msg = (string) json_encode([
-                'from' => $sender->getTelegramAccountLink(),
-                'to' => $userToSend->getTelegramAccountLink(),
-            ]);
-            $message = new TelegramMessage($msg);
-        }
+	    /** @var User $sender */
+	    $msg = $notificationContext->execute($sender, $userToSend);
 
-        $this->messageBus->dispatch(
-            message: $message
-        );
+	    $notification = new Notification($sender->getId(), $recipientId);
+	    $notification->setDelivered(true);
+	    $this->notificationRepository->saveAndCommit($notification);
 
-        $notification = new Notification($sender->getId(), $recipientId);
-        $notification->setDelivered(true);
-
-        $this->notificationRepository->saveAndCommit($notification);
-
-        return $msg;
+	    return $msg;
     }
 }
